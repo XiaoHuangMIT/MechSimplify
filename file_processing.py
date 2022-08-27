@@ -6,7 +6,7 @@ import sys
 import numpy as np
 import pandas as pd
 from molSimplify.Classes.mol3D import *
-from molSimplify.Classes.ligand import * #to be tested if it is necessary
+from molSimplify.job_manager.manager_io import read_outfile
 
 
 
