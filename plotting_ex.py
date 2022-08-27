@@ -49,6 +49,7 @@ def plot_Ehsls(Ecolumn, title, size=(8,6), width=0.3, color='tab:blue', return_c
     
     fig, ax = plt.subplots(figsize=size)
     rects1 = ax.bar(x, counts, wid,color=color)
+    ax.bar_label(rects1, label_type='center',padding=3)
     
     ax.set_ylabel('Counts')
     ax.set_title(title)
