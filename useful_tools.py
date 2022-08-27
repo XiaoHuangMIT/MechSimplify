@@ -16,4 +16,11 @@ def separate_metal_and_charge(df):
   dfmn = df[df.metal == 'Mn']
   dfmn2 = dfmn[dfmn.ox_csd == 2]
   
-  return dffe2,dffe3,dfco2,dfco3,dfmn2
+  lcount = []
+  lcount.append(dffe2.shape[0])
+  lcount.append(dffe3.shape[0])
+  lcount.append(dfco2.shape[0])
+  lcount.append(dfco3.shape[0])
+  lcount.append(dfmn2.shape[0])
+  
+  return dffe2, dffe3, dfco2, dfco3, dfmn2, lcount
