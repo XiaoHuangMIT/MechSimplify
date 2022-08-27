@@ -65,7 +65,7 @@ def prep_tera_input(refcode, spin, spinval, charge, mol2string, ap_pair=None, CO
         if COGEF == None: #Allocate longer time for COGEF jobs
             f.write('#$ -l h_rt=48:00:00\n')
         else:
-            f.write(('#$ -l h_rt=240:00:00\n')
+            f.write('#$ -l h_rt=240:00:00\n')
         f.write('#$ -l h_rss=8G\n')
         f.write('#$ -q (gpusnew|gpus)\n')
         f.write('#$ -l gpus=1\n')
