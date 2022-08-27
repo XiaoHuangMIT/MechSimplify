@@ -52,7 +52,7 @@ def prep_tera_input(refcode, spin, spinval, charge, mol2string, ap_pair=None, CO
     #Unwrap COGEF job details
     pp_pair = str(COGEF[0]) + '_' + str(COGEF[1])
     dist0 = str(COGEF[2])
-    distn = float(COGEF[2]) + float(COGEF[3])
+    distn = str(float(COGEF[2]) + float(COGEF[3]))
     steps = str(COGEF[4] + 1) 
 
     #Write jobscripts
@@ -107,7 +107,7 @@ def prep_tera_input(refcode, spin, spinval, charge, mol2string, ap_pair=None, CO
         if COGEF != None:
             f.write('$constraint_scan\n')
             f.write('bond ' + dist0 + ' ' + distn + ' ' + steps + ' ' + pp_pair + '\n')
-            f.write('$end')
+            f.write('$end\n')
         #f.write('pcm cosmo\n')b mostly non solvent or nonpolar solvent system
         #f.write('epsilon 78.39\n')
         #f.write('pcm_radii read\n')
@@ -155,6 +155,21 @@ def find_opt_xyz(optim):
     
 
     
+def get_atoms_distance(mol2,idx1,idx2):
+    
+    #Returns the distance between two atoms
+    #Note: molSimplify generated mol2 idx start with 0
+    
+    molecule = mol3D()
+    molecule.readfrommol2(mol2,readstring=True)
+    atom1 = molecule.getAtom(idx1)
+    atom2 = molecule.getAtom(idx2)
+    dist = atom1.distance(atom2)
+    
+    return dist
+
+
+
 def get_tera_opt_out(filepath):
     
     #Getting optimized energy and geometry structure from a terachem geom opt job
