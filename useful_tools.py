@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def separate_metal_and_charge(df):
+def separate_metal_and_charge(df, count_only == False):
   
   dffe = df[df.metal == 'Fe']
   dffe2 = dffe[dffe.ox_csd == 2]
@@ -23,4 +23,7 @@ def separate_metal_and_charge(df):
   lcount.append(dfco3.shape[0])
   lcount.append(dfmn2.shape[0])
   
-  return dffe2, dffe3, dfco2, dfco3, dfmn2, lcount
+  if count_only == True:
+    return lcount
+  else:
+    return dffe2, dffe3, dfco2, dfco3, dfmn2, lcount
