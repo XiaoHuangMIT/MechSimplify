@@ -10,6 +10,11 @@ from molSimplify.Classes.ligand import * #to be tested if it is necessary
 
 
 
+######################################################################################################################
+#########################################################Terachem#####################################################
+######################################################################################################################
+
+
 def prep_tera_input(refcode, spin, spinval, charge, mol2string, ap_pair=None):
 
     #Function to prepare terachem geometry optimization inputs which could be used with job_manager on Gibraltar
@@ -131,6 +136,37 @@ def find_opt_xyz(optim):
     file2 = open('temp.xyz', 'w')
     file2.writelines(lines_output)
     file2.close()
+    
+
+    
+def get_tera_opt_out(filepath):
+    
+    #Getting optimized energy and geometry structure from a terachem geom opt job
+    #filepath: folder named X, containing X_jobscript, X.in, X.xyz, X.out and scr folder
+    #dependency: find_opt_xyz; read_outfile
+    
+    if os.path.exists(filepath + '/scr') == False: #if not finished
+        Eout = None
+        mol2out = 'Failed Convergence'
+    else:
+        dict_out = read_outfile(filepath + '/' + filepath + '.out')
+        Eout = dict_out['finalenergy']
+        if Eout != None: 
+            find_opt_xyz(filepath + '/scr/optim.xyz')
+            mol3Dout = mol3D()
+            mol3Dout.readfromxyz('temp_opt.xyz')
+            mol2out = mol3Dout.writemol2('temp.mol',writestring = True)
+        else: #if convergence failed
+            mol2out = 'Failed Convergence'
+    
+    return Eout,mol2out    
+ 
+    
+    
+######################################################################################################################
+#########################################################Orca#########################################################
+######################################################################################################################
+
 
 
 def prep_orca_input(refcode, charge, spin, spinval, mol2, multiPP = None, dist_constraint = None, EFEI = None):
