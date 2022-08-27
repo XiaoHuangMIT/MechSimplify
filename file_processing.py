@@ -5,7 +5,8 @@ import os
 import sys
 import numpy as np
 import pandas as pd
-from molSimplify.Classes.mol3D import *
+from molSimplify.Classes.mol3D import mol3D
+from molSimplify.Classes.atom3D import atom3D #distance
 from molSimplify.job_manager.manager_io import read_outfile
 
 
