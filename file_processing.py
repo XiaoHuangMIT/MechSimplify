@@ -15,7 +15,7 @@ from molSimplify.job_manager.manager_io import read_outfile
 ######################################################################################################################
 
 
-def prep_tera_input(refcode, spin, spinval, charge, mol2string, ap_pair=None):
+def prep_tera_input(refcode, spin, spinval, charge, mol2string, ap_pair=None, COGEF=None):
 
     #Function to prepare terachem geometry optimization inputs which could be used with job_manager on Gibraltar
     #Method by default:
@@ -33,6 +33,8 @@ def prep_tera_input(refcode, spin, spinval, charge, mol2string, ap_pair=None):
     #charge: integer value of charge
     #mol2string: mol2 string of the molecule
     #ap_pair: pair of terminal Hs to be replaced by ethyl, in length-2 list
+    #COGEF: list of COGEF job details: [pp1,pp2,beginning distance,streching distance, steps]
+    #Note: for COGEF, terachem start index with 1, whereas pulling point given by molSimplify begin with 0
 
     #Generate name of job
     if ap_pair == None:
@@ -45,6 +47,12 @@ def prep_tera_input(refcode, spin, spinval, charge, mol2string, ap_pair=None):
     dirname = basename+'/'
     if not os.path.exists(dirname):
         os.mkdir(dirname)
+    
+    #Unwrap COGEF job details
+    pp_pair = str(COGEF[0]) + '_' + str(COGEF[1])
+    dist0 = str(COGEF[2])
+    distn = float(COGEF[2]) + float(COGEF[3])
+    steps = str(COGEF[4] + 1) 
 
     #Write jobscripts
     with open(dirname + basename + '_jobscript', 'w') as f:
@@ -53,7 +61,10 @@ def prep_tera_input(refcode, spin, spinval, charge, mol2string, ap_pair=None):
         f.write('#$ -cwd\n')
         f.write('#$ -R y\n')
         f.write('#$ -cwd\n')
-        f.write('#$ -l h_rt=48:00:00\n')
+        if COGEF == None: #Allocate longer time for COGEF jobs
+            f.write('#$ -l h_rt=48:00:00\n')
+        else:
+            f.write(('#$ -l h_rt=240:00:00\n')
         f.write('#$ -l h_rss=8G\n')
         f.write('#$ -q (gpusnew|gpus)\n')
         f.write('#$ -l gpus=1\n')
@@ -92,6 +103,10 @@ def prep_tera_input(refcode, spin, spinval, charge, mol2string, ap_pair=None):
         f.write('gpus 1\n')
         f.write('dispersion yes\n')
         f.write('new_minimizer yes\n')
+        if COGEF != None:
+            f.write('$constraint_scan\n')
+            f.write('bond ' + dist0 + ' ' + distn + ' ' + steps + ' ' + pp_pair + '\n')
+            f.write('$end')
         #f.write('pcm cosmo\n')b mostly non solvent or nonpolar solvent system
         #f.write('epsilon 78.39\n')
         #f.write('pcm_radii read\n')
