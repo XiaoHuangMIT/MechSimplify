@@ -5,7 +5,7 @@ plt.rc('font',size=15)
 
 
 
-####Histogram####
+####Bar####
 metals = ['Fe2','Fe3','Co2','Co3','Ni2','Mn2'] #NI3+ only 5/3
 totals = np.array([181,5,78,25,100,21])
 singles = np.array([120,4,57,14,72,14])
@@ -36,4 +36,24 @@ fig.tight_layout()
 
 plt.show()
 
+
+################################Analayze Spin Splitting#####################################
+def plot_Ehsls(Ecolumn, title, size=(8,6), width=0.3, color='tab:blue', return_counts=True):
+    
+    counts = np.histogram(Ecolumn,bins = [0,5,10,20,30,1000])
+    counts = counts[0]
+    
+    Es = ['0-5','5-10','10-20','20-30','30+']
+    x = np.arange(len(Es))
+    wid = width
+    
+    fig, ax = plt.subplots(figsize=size)
+    rects1 = ax.bar(x, counts, wid,color=color)
+    
+    ax.set_ylabel('Counts')
+    ax.set_title(title)
+    ax.set_xticks(x, Es)
+    ax.set_xlabel('HS-LS Spin Splitting Energy (kcal/mol)')
+    
+    plt.show()
 
