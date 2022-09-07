@@ -16,7 +16,8 @@ from molSimplify.job_manager.manager_io import read_outfile
 ######################################################################################################################
 
 
-def prep_tera_input(refcode, spin, spinval, charge, mol2string, ap_pair=None, COGEF=None):
+
+def prep_tera_input(refcode, spin, spinval, charge, mol2string, ap_pair=None, COGEF=None, walltime='48:00:00'):
 
     #Function to prepare terachem geometry optimization inputs which could be used with job_manager on Gibraltar
     #Method by default:
@@ -35,6 +36,7 @@ def prep_tera_input(refcode, spin, spinval, charge, mol2string, ap_pair=None, CO
     #mol2string: mol2 string of the molecule
     #ap_pair: pair of terminal Hs to be replaced by ethyl, in length-2 list
     #COGEF: list of COGEF job details: [pp1,pp2,beginning distance,streching distance, steps]
+    #walltime: walltime for the job
     #Note: for COGEF, terachem start index with 1, whereas pulling point given by molSimplify begin with 0
 
     #Generate name of job
@@ -51,8 +53,8 @@ def prep_tera_input(refcode, spin, spinval, charge, mol2string, ap_pair=None, CO
     
     #Unwrap COGEF job details
     pp_pair = str(COGEF[0]) + '_' + str(COGEF[1])
-    dist0 = str(COGEF[2])
-    distn = str(float(COGEF[2]) + float(COGEF[3]))
+    dist0 = str(COGEF[2])[0:7]
+    distn = str(float(COGEF[2]) + float(COGEF[3]))[0:7]
     steps = str(COGEF[4] + 1) 
 
     #Write jobscripts
@@ -62,10 +64,7 @@ def prep_tera_input(refcode, spin, spinval, charge, mol2string, ap_pair=None, CO
         f.write('#$ -cwd\n')
         f.write('#$ -R y\n')
         f.write('#$ -cwd\n')
-        if COGEF == None: #Allocate longer time for COGEF jobs
-            f.write('#$ -l h_rt=48:00:00\n')
-        else:
-            f.write('#$ -l h_rt=240:00:00\n')
+        f.write('#$ -l h_rt=' + walltime + '\n')
         f.write('#$ -l h_rss=8G\n')
         f.write('#$ -q (gpusnew|gpus)\n')
         f.write('#$ -l gpus=1\n')
