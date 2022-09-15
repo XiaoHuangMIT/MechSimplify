@@ -5,6 +5,17 @@ import pandas as pd
 from molSimplify.Classes.mol3D import mol3D
 from molSimplify.Classes.atom3D import atom3D
 
+
+
+df = pd.read_csv('opt_natoms.csv')
+#Spin-splitting filtering
+df = df[df.Ehsls > 0]
+df = df[df.Ehsls < 30]
+#Size: 0 - 74 
+df = df[df.natoms < 75]
+
+
+
 idxs = df.index.values.tolist()
 
 for idx in idxs:
