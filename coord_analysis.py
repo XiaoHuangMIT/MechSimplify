@@ -74,6 +74,17 @@ def find_coord_atom_distances(molecule,ccaid=None):
     return [dcc1,dcc2,dcc3],[(idx1,idx2),(idx1,idx3),(idx2,idx3)]
 
   
+def find_coord_atom_angle(molecule,ccaid):
+  
+    #Analyzing angle: coord_atom_1--central_coord_atom--coord_atom_2
+    #Analysis based on one ligand only since homoleptic
+    #Inputs:
+    #molecule: mol3D object (octahedral and homoleptic), with mer symmetry
+    #ccaid: idx of one of the central coordinating atoms
+    #Output: the angle
+    
+    
+  
   
 def find_cbond_length(molecule,ccaid=None):
   
