@@ -11,7 +11,7 @@ import networkx as nx
 
 
 
-def find_central_atom(molecule):
+def find_central_coord_atom(molecule):
   
     #Returns the central coordinating atom of two ligands
     #Inputs:
@@ -40,15 +40,16 @@ def find_central_atom(molecule):
   
   
   
-def find_dcc(molecule,ccaid=None):
+def find_coord_atom_distances(molecule,ccaid=None):
     
     #Analyzing distances between coordinating atoms
-    #Returns a list of list, element in format [idx1,idx2,distance]
     #Analysis based on one ligand only since homoleptic
-    #If mer complex: first two elements correspond to distance between central and two other coordinating atoms
     #Inputs:
-    #molecule: mol3D object
-    #ccaid one of the central coordinating atoms, default None for fac complexes
+    #molecule: mol3D object (octahedral and homoleptic)
+    #ccaid: one of the central coordinating atoms, default None for fac complexes
+    #Outputs:
+    #List of distances, and list of pairs: with the distance
+    #If mer complex: two distances between central and two other coordinating atoms first
     
     if ccaid != None: #Mer complexes
       metal_id = molecule.findMetal()[0]
@@ -70,6 +71,85 @@ def find_dcc(molecule,ccaid=None):
     dcc2 = atom1.distance(atom3)
     dcc3 = atom2.distance(atom3)
 
-    return [[idx1,idx2,dcc1],[idx1,idx3,dcc2],[idx2,idx3,dcc3]]
+    return [dcc1,dcc2,dcc3],[(idx1,idx2),(idx1,idx3),(idx2,idx3)]
 
+  
+  
+def find_cbond_length(molecule,ccaid=None):
+  
+    #Analyze bond length of coordination bonds
+    #Analysis based on one ligand only since homoleptic
+    #Inputs: 
+    #molecule: mol3D object (octahedral and homoleptic)
+    #ccaid: if mer complex
+    #Outputs:
+    #List of bond lengths and list of corresponding coordinating atoms
+    #If mer: central coord atom first
+    
+    metal_id = molecule.findMetal()[0]
+    if ccaid != None:
+      lig1caid,lig2caid = ligand_breakdown(molecule)[2][0],ligand_breakdown(molecule)[2][1]
+      if ccaid in lig1caid:
+          idxs = lig1caid #indexes of coordinating atoms
+      else:
+          idxs = lig2caid
+      idxs.remove(ccaid)
+      idx1,idx2,idx3 = ccaid,idxs[0],idxs[1]
+    else:
+      idxs = ligand_breakdown(molcule)[2][0]
+      idx1,idx2,idx3 = idxs[0],idxs[1],idxs[2]
+      
+    metal = molecule.getAtom(metal_id)
+    atom1 = molecule.getAtom(idx1)
+    atom2 = molecule.getAtom(idx2)
+    atom3 = molecule.getAtom(idx3)
+    dcm1 = metal.distance(atom1)
+    dcm2 = metal.distance(atom2)
+    dcm3 = metal.distance(atom3)
+    
+    return [dcm1,dcm2,dcm3],[idx1,idx2,idx3]
+
+  
+  
+def find_cbond_angle(molecule,ccaid=None):
+
+    #Analyze bond angles
+    #Inputs:
+    #molecule: mol3D object (octahedral, homoleptic)
+    #ccaid: central coordinating atom (if mer symmstry)
+    #Outputs:
+    #List of bond angles, and list of pairs of corresponding coord atoms
+    #If mer symmetry: two angles involving central coord atom first
+    
+    metal_id = molecule.findMetal()[0]
+    if ccaid != None:
+      lig1caid,lig2caid = ligand_breakdown(molecule)[2][0],ligand_breakdown(molecule)[2][1]
+      if ccaid in lig1caid:
+          idxs = lig1caid #indexes of coordinating atoms
+      else:
+          idxs = lig2caid
+      idxs.remove(ccaid)
+      idx1,idx2,idx3 = ccaid,idxs[0],idxs[1]
+    else:
+      idxs = ligand_breakdown(molecule)[2][0]
+      idx1,idx2,idx3 = idxs[0],idxs[1],idxs[2]
+      
+     metal = molecule.getAtom(metal_id)
+     atom1 = molecule.getAtom(idx1)
+     atom2 = molecule.getAtom(idx2)
+     atom3 = molecule.getAtom(idx3)
+     v1 = np.array(metal.distancev(atom1))
+     v2 = np.array(metal.distancev(atom2))
+     v3 = np.array(metal.distancev(atom3))
+     cmcangle1 = vecangle(v1,v2)
+     cmcangle2 = vecangle(v1,v3)
+     cmcangle3 = vecangle(v2,v3)
+      
+     return [cmcangle1,cmcangle2,cmcangle3],[(idx1,idx2),(idx1,idx3),(idx2,idx3)]
+  
+  
+  
 def 
+  
+  
+
