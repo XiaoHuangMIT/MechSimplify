@@ -15,21 +15,24 @@ def find_central_atom(molecule):
     #Inputs:
     #molecule: mol3D object
     
-    metal_id = molecule.findMetal()[0]
-    lig1caid,lig2caid = ligand_breakdown(molecule)[2][0],ligand_breakdown(molecule)[2][1]
-    lig1ca3d,lig2ca3d = [],[]
-    for i in np.arange(3):
-        lig1ca3d.append(molecule.getAtom(lig1caid[i]))
-        lig2ca3d.append(molecule.getAtom(lig2caid[i]))
-    lig1cadists,lig2cadists = [],[]
-    lig1cadists.append(lig1ca3d[0].distance(lig1ca3d[1])+lig1ca3d[0].distance(lig1ca3d[2]))
-    lig1cadists.append(lig1ca3d[1].distance(lig1ca3d[0])+lig1ca3d[1].distance(lig1ca3d[2]))
-    lig1cadists.append(lig1ca3d[2].distance(lig1ca3d[0])+lig1ca3d[2].distance(lig1ca3d[1]))
-    lig2cadists.append(lig2ca3d[0].distance(lig2ca3d[1])+lig2ca3d[0].distance(lig2ca3d[2]))
-    lig2cadists.append(lig2ca3d[1].distance(lig2ca3d[0])+lig2ca3d[1].distance(lig2ca3d[2]))
-    lig2cadists.append(lig2ca3d[2].distance(lig2ca3d[0])+lig2ca3d[2].distance(lig2ca3d[1]))
-    ccaid1 = lig1caid[lig1cadists.index(min(lig1cadists))]#idx of 'central' atom in first and second ligand
-    ccaid2 = lig2caid[lig2cadists.index(min(lig2cadists))]
-    
+    try:
+      metal_id = molecule.findMetal()[0]
+      lig1caid,lig2caid = ligand_breakdown(molecule)[2][0],ligand_breakdown(molecule)[2][1]
+      lig1ca3d,lig2ca3d = [],[]
+      for i in np.arange(3):
+          lig1ca3d.append(molecule.getAtom(lig1caid[i]))
+          lig2ca3d.append(molecule.getAtom(lig2caid[i]))
+      lig1cadists,lig2cadists = [],[]
+      lig1cadists.append(lig1ca3d[0].distance(lig1ca3d[1])+lig1ca3d[0].distance(lig1ca3d[2]))
+      lig1cadists.append(lig1ca3d[1].distance(lig1ca3d[0])+lig1ca3d[1].distance(lig1ca3d[2]))
+      lig1cadists.append(lig1ca3d[2].distance(lig1ca3d[0])+lig1ca3d[2].distance(lig1ca3d[1]))
+      lig2cadists.append(lig2ca3d[0].distance(lig2ca3d[1])+lig2ca3d[0].distance(lig2ca3d[2]))
+      lig2cadists.append(lig2ca3d[1].distance(lig2ca3d[0])+lig2ca3d[1].distance(lig2ca3d[2]))
+      lig2cadists.append(lig2ca3d[2].distance(lig2ca3d[0])+lig2ca3d[2].distance(lig2ca3d[1]))
+      ccaid1 = lig1caid[lig1cadists.index(min(lig1cadists))]#idx of 'central' atom in first and second ligand
+      ccaid2 = lig2caid[lig2cadists.index(min(lig2cadists))]
+    except:
+      ccaid1, ccaid2 = 'Not found', 'Not found'
+      
     return ccaid1,ccaid2
   
