@@ -74,6 +74,7 @@ def find_coord_atom_distances(molecule,ccaid=None):
     return [dcc1,dcc2,dcc3],[(idx1,idx2),(idx1,idx3),(idx2,idx3)]
 
   
+  
 def find_coord_atom_angle(molecule,ccaid):
   
     #Analyzing angle: coord_atom_1--central_coord_atom--coord_atom_2
@@ -83,7 +84,24 @@ def find_coord_atom_angle(molecule,ccaid):
     #ccaid: idx of one of the central coordinating atoms
     #Output: the angle
     
+    lig1caid,lig2caid = ligand_breakdown(molecule)[2][0],ligand_breakdown(molecule)[2][1]
+    if ccaid in lig1caid:
+        idxs = lig1caid #indexes of coordinating atoms
+    else:
+        idxs = lig2caid
+    idxs.remove(ccaid)
     
+    idx1,idx2,idx3 = ccaid,idxs[0],idxs[1]
+    atom1 = molecule.getAtom(idx1)
+    atom2 = molecule.getAtom(idx2)
+    atom3 = molecule.getAtom(idx3)
+    
+    v1 = np.array(atom1.distancev(atom2))
+    v2 = np.array(atom1.distancev(atom3))
+    cccangle = vecangle(v1,v2)
+    
+    return cccangle
+  
   
   
 def find_cbond_length(molecule,ccaid=None):
@@ -158,9 +176,6 @@ def find_cbond_angle(molecule,ccaid=None):
       
      return [cmcangle1,cmcangle2,cmcangle3],[(idx1,idx2),(idx1,idx3),(idx2,idx3)]
   
-  
-  
-def 
   
   
 
