@@ -153,3 +153,43 @@ def continue_COGEF(oldpath,new_parent_path,walltime = 'same',stretch_dist = 10, 
         for line in xyz_lines:
             f.write(str(line))
         f.close()
+
+        
+        
+def iters_each_step(filepath):
+    
+    #Analyze for each COGEF scan step, how many optimization steps were perfromed
+    #Input:
+    #filepath: path to optim.xyz
+    #Output:
+    #list of num frames for each structure
+    
+    try:
+        file = open(filepath,'r')
+    except:
+        return 'No File' #File doesnt exist
+    lines = file.readlines()
+    if len(lines) < 2:
+        return 'Empty File' #File is empty
+    
+    nums = []
+    frames = []
+
+    for line in lines:
+        if 'frame' in line:
+            nums.append(int(line.split()[2]))
+    
+    for i in np.arange(1,len(nums)):
+        if nums[i] == 0:
+            frames.append(nums[i-1] + 1) #since frame numbers start with 0
+    
+    return frames
+
+
+
+def plot_frames_vs_stretch(nframes,sep = 0.2):
+    
+    #Plot number of structures generated during optimization at each streching distance
+    
+    xs = np.arange(len(nframes)) * 0.2
+    plt.plot(xs,nframes)
