@@ -219,7 +219,7 @@ def plot_nsteps_vs_dist(lfs,dist=10,sep=0.2,cutoff=0):
     if cutoff > 0:
         plt.title(title)
     sumnums = []
-    for i in np.arange(51):
+    for i in np.arange(int(dist/sep) + 1):
         count = 0
         for nframes in lfs:
             if type(nframes) != str and len(nframes) > i and len(nframes) > cutoff:
@@ -262,7 +262,7 @@ def plot_pnsteps_vs_dist(lfs,dist=10,sep=0.2,cutoff=0):
     if cutoff > 0:
         plt.title(title)
     sumnums = []
-    for i in np.arange(51):
+    for i in np.arange(int(dist/sep) + 1):
         count = 0
         for nframes in lfs:
             if type(nframes) != str and len(nframes) > i and len(nframes) > cutoff:
