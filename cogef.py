@@ -8,7 +8,7 @@ from molSimplify.Classes.ligand import ligand_breakdown
 
 
 
-def analyze_scan_optim(filepath): #completed
+def analyze_scan_optim(filepath,no_mol2 = False): #completed
     
     #Read a scan_optim output file of a COGEF run
     #Returns list of distance, list of energy, list of mol2
@@ -38,20 +38,24 @@ def analyze_scan_optim(filepath): #completed
     num_frames = int(num_frames)
     
     #Storing mol2s
-    mol2s = []
-    for i in np.arange(num_frames):
-        first_line = i * num_lines
-        last_line = first_line + (num_atoms + 2) - 1 #Each xyz has num_atoms+2 lines
-        lines_output = lines_output = lines[first_line:last_line+1]
-        file2 = open('temp.xyz', 'w')
-        file2.writelines(lines_output)
-        file2.close()
-        moltemp = mol3D()
-        moltemp.readfromxyz('temp.xyz')
-        mol2 = moltemp.writemol2('temp.mol',writestring = True)
-        mol2s.append(mol2)
+    if no_mol2 == False:
+        mol2s = []
+        for i in np.arange(num_frames):
+            first_line = i * num_lines
+            last_line = first_line + (num_atoms + 2) - 1 #Each xyz has num_atoms+2 lines
+            lines_output = lines_output = lines[first_line:last_line+1]
+            file2 = open('temp.xyz', 'w')
+            file2.writelines(lines_output)
+            file2.close()
+            moltemp = mol3D()
+            moltemp.readfromxyz('temp.xyz')
+            mol2 = moltemp.writemol2('temp.mol',writestring = True)
+            mol2s.append(mol2)
     
-    return distances, energies, mol2s
+    if no_mol2 == False:
+        return distances, energies, mol2s
+    else:
+        return distances, energies
   
   
   
