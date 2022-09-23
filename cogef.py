@@ -187,9 +187,89 @@ def iters_each_step(filepath):
 
 
 
-def plot_frames_vs_stretch(nframes,sep = 0.2):
+def plot_nsteps_vs_dist(lfs,dist=10,sep=0.2,cutoff=0):
     
-    #Plot number of structures generated during optimization at each streching distance
+    #For each molecule, plot the number of structures generated at optimization at each distance during COGEF
+    #Also plot the sum of number of structures durinng each optimization at distances for all molecules
+    #Return the sum num steps for all structures for further analysis
+    #Inputs:
+    #lfs: list of list, every element correspond to a list containing number of frames during each optimization step
+    #at each distance for every molecule
+    #dist and sep: total distance and distance at each step for COGEF
+    #cutoff: only analyze molecules that undergo at least certain num of steps
+    #Outputs:
+    #Two plots, and a list of the sum num steps for all structures
     
-    xs = np.arange(len(nframes)) * 0.2
-    plt.plot(xs,nframes)
+    plt.figure()
+    plt.xlabel('Stretching Distance (A)')
+    plt.ylabel('# Structures')
+    if cutoff > 0:
+        title = 'Above ' + str(cutoff*sep) + 'A only'
+        plt.title(title)
+    for nframes in lfs:
+        if type(nframes) != str and len(nframes) > cutoff:
+            xs = np.arange(len(nframes)) * 0.2
+            nframes = np.array(nframes)
+            plt.plot(xs,nframes)
+    plt.show()
+
+    plt.figure()
+    plt.xlabel('Stretching Distance (A)')
+    plt.ylabel('Sum # Structures')
+    if cutoff > 0:
+        plt.title(title)
+    sumnums = []
+    for i in np.arange(51):
+        count = 0
+        for nframes in lfs:
+            if type(nframes) != str and len(nframes) > i and len(nframes) > cutoff:
+                count += int(nframes[i])
+        sumnums.append(count)
+    plt.plot(np.arange(0,dist+sep,sep),sumnums)
+
+    
+    
+def plot_pnsteps_vs_dist(lfs,dist=10,sep=0.2,cutoff=0):
+    
+    #For each molecule, plot the number of structures generated at optimization at each distance during COGEF divided
+    #by total number of structures generated at all distances (portion)
+    #Also plot the sum of number of structures durinng each optimization at distances for all molecules
+    #Return the sum portion num steps for all structures for further analysis
+    #Inputs:
+    #lfs: list of list, every element correspond to a list containing number of frames during each optimization step
+    #at each distance for every molecule
+    #dist and sep: total distance and distance at each step for COGEF
+    #cutoff: only analyze molecules that undergo at least certain num of steps
+    #Outputs:
+    #Two plots, and a list of the sum portion num steps for all structures
+    
+    plt.figure()
+    plt.xlabel('Stretching Distance (A)')
+    plt.ylabel('# Portion of structures')
+    if cutoff > 0:
+        title = 'Above ' + str(cutoff*sep) + 'A only'
+        plt.title(title)
+    for nframes in lfs:
+        if type(nframes) != str and len(nframes) > cutoff:
+            xs = np.arange(len(nframes)) * 0.2
+            nframes = np.array(nframes)
+            plt.plot(xs,nframes/sum(nframes))
+    plt.show()
+
+    plt.figure()
+    plt.xlabel('Stretching Distance (A)')
+    plt.ylabel('Sum # portion of structures')
+    if cutoff > 0:
+        plt.title(title)
+    sumnums = []
+    for i in np.arange(51):
+        count = 0
+        for nframes in lfs:
+            if type(nframes) != str and len(nframes) > i and len(nframes) > cutoff:
+                count += nframes[i]/sum(nframes)
+        sumnums.append(count)
+    plt.plot(np.arange(0,dist+sep,sep),sumnums)
+    
+    
+    
+ 
