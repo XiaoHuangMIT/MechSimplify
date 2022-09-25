@@ -179,6 +179,8 @@ def coord_number_analysis(filepath,threshold=1.5):
     coords = ligcons[0] + ligcons[1]
     coords.sort() #index of coordinating atoms
     metal = moltemp.findMetal()[0] #index of metal
+    if len(coords) != 6: #If ligand breakdown didnt work well
+        return 'Failed'
     
     #Find original bond lengths of six bonds
     bonds_0 = []
