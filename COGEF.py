@@ -7,8 +7,60 @@ from molSimplify.Classes.mol3D import mol3D
 from molSimplify.Classes.ligand import ligand_breakdown
 
 
+#General principle: don`t add bunch of try/except (shall clean them later)
+#Use helper function to first determine/eliminate extreme cases
 
-def analyze_scan_optim(filepath,no_mol2 = False): #completed
+
+def count_steps(filepath):
+    
+    #Analyze number of steps a COGEF run had proceeded
+    #Return 0 as well if no file was found
+    #Tip: we count 0A optimization as 1st step as well, so 10A stretching would be 51 steps
+    
+    try:
+        file = open(filepath,'r')
+    except:
+        return 0
+    lines = file.readlines()
+    
+    count = 0
+    for line in lines:
+        if 'Converged' in line:
+            count = count + 1
+    return count
+
+
+
+def distance3d(coord1,coord2): 
+    
+    #A helper function to calculate distance between two 3d points (as list of floats)
+    
+    coord1 = np.array(coord1)
+    coord2 = np.array(coord2)
+    squared_dist = np.sum((coord1-coord2)**2, axis=0)
+    dist = np.sqrt(squared_dist)
+    return dist
+
+
+
+def distance_from_xyz(lines,atom1,atom2,frontlines=2):
+    
+    #A helper function to calculate distance between two atoms with
+    #lines: lines of xyz file, stored as list
+    #atom1, atom2: index of atoms that START WITH ZERO
+    #frontlines: number of additional lines in front, default 2 for terachem optimizations
+    
+    #0th atom is 3rd line/lines[2], so nth atom is lines[n+2]
+    line1,line2 = lines[atom1+2].split(),lines[atom2+2].split()
+    x1,y1,z1 = float(line1[1]), float(line1[2]), float(line1[3])
+    x2,y2,z2 = float(line2[1]), float(line2[2]), float(line2[3])
+    
+    dist = distance3d([x1,y1,z1],[x2,y2,z2])
+    return dist
+
+
+
+def analyze_scan_optim(filepath,no_mol2 = False): 
     
     #Read a scan_optim output file of a COGEF run
     #Returns list of distance, list of energy, list of mol2
@@ -84,6 +136,70 @@ def calculate_force(Es,dist=0.2):
         F = F*1.66/100 #in nN
         Fs.append(F)
     return max(Fs)
+
+
+
+def coord_number_analysis(filepath,threshold=1.5):
+    
+    #Analyze the coordination number (how many coord bonds were still there) of each structure during COGEF
+    #If a bond had become longer than threshold * original length: consider it broken
+    #To save time: does not involve extensive calling of mol3D
+    #(currently: could only work with octahedral/6-coord complexes)
+    #Inputs:
+    #filepath: path to scan_optim.xyz
+    #Outputs:
+    #A list of coordination numbers
+    
+    
+    file = open(filepath, 'r')
+    lines = file.readlines()
+    
+    #Count number of atoms of molecule, thus number of lines in a xyz and number of total structures
+    num_atoms = lines[0].split()[0]
+    num_atoms = int(num_atoms)
+    num_lines = num_atoms+2 
+    num_frames = len(lines)/(num_lines)
+    num_frames = int(num_frames)
+    
+    #Summary all xyz into a list of lists, each list correspond to lines of single xyz
+    xyzs = [] 
+    for i in np.arange(num_frames):
+        first_line = i * num_lines
+        last_line = first_line + (num_atoms + 2) - 1 #Each xyz has num_atoms+2 lines
+        lines_each_xyz = lines[first_line:last_line+1]
+        xyzs.append(lines_each_xyz)
+    
+    #Generate a mol3D instance to find index of metal and coordinating atoms
+    file2 = open('temp.xyz', 'w')
+    file2.writelines(xyzs[0])
+    file2.close()
+    moltemp = mol3D()
+    moltemp.readfromxyz('temp.xyz')
+    liglist,ligdent,ligcons = ligand_breakdown(moltemp)
+    coords = ligcons[0] + ligcons[1]
+    coords.sort() #index of coordinating atoms
+    metal = moltemp.findMetal()[0] #index of metal
+    
+    #Find original bond lengths of six bonds
+    bonds_0 = []
+    for idx in coords:
+        l = distance_from_xyz(xyzs[0],metal,idx)
+        bonds_0.append(l)
+    
+    #Evaluate for each bond at each structure: had it become longer than threshold * original length
+    bond_orders = []
+    for job in np.arange(len(xyzs)):
+        order = 0
+        bonds = []
+        for idx in coords: #coord bond length of each structure
+            l = distance_from_xyz(xyzs[job],metal,idx)
+            bonds.append(l)
+        for i in np.arange(6): #compare each bond length
+            if bonds[i] < bonds_0[i] * threshold:
+                order += 1
+        bond_orders.append(order)
+    
+    return bond_orders, bonds
 
 
 
@@ -274,6 +390,8 @@ def plot_pnsteps_vs_dist(lfs,dist=10,sep=0.2,cutoff=0):
         sumnums.append(count)
     plt.plot(np.arange(0,dist+sep,sep),sumnums)
     
-    
+
+
+
     
  
