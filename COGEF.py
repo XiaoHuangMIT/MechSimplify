@@ -199,7 +199,7 @@ def coord_number_analysis(filepath,threshold=1.5):
                 order += 1
         bond_orders.append(order)
     
-    return bond_orders, bonds
+    return bond_orders
 
 
 
