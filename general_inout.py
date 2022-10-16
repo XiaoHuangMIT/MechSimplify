@@ -350,3 +350,50 @@ def make_dir(dirname):
     else:
         print('directories already exist')
         sys.exit()
+
+        
+ def analyze_spin(df,col1,col2,col3,name):
+    
+    #Analyze the ground, second and highest spin of molecules recorded in dataframe
+    #col1,col2,col3: column name of low, intermediate and high spin
+    #name: results summarized in column with name Esplitingname
+    
+    grounds,seconds,thirds,Esps = [],[],[],[]
+
+    for i in np.arange(df.shape[0]):
+    
+        row = df.iloc[i]
+        metal = row['metal']
+        charge = row['ox_csd']
+    
+        if metal == 'Co' and charge == 2.0:
+            Els = float(row[col1])
+            Ehs = float(row[col3])
+            if Els < Ehs:
+                ground,second,third = 'LS','HS','N/A'
+                Esp = (Ehs - Els) * 627.509
+            else:
+                ground,second,third = 'HS','LS','N/A'
+                Esp = (Els - Ehs) * 627.509
+        
+    
+        else:
+            Els = float(row[col1])
+            Eis = float(row[col2])
+            Ehs = float(row[col3])
+            df1 = pd.DataFrame()
+            df1['Spin'] = ['LS','IS','HS']
+            df1['E'] = [Els,Eis,Ehs]
+            df1 = df1.sort_values(by = 'E')
+            ground,second,third = df1['Spin'].iloc[0],df1['Spin'].iloc[1],df1['Spin'].iloc[2]
+            Esp = (df1['E'].iloc[1] - df1['E'].iloc[0]) * 627.509
+    
+        grounds.append(ground)
+        seconds.append(second)
+        thirds.append(third)
+        Esps.append(Esp)
+
+    df['ground_spin' + name] = grounds
+    df['second_spin' + name] = seconds
+    df['third_spin' + name] = thirds
+    df['Esplitting' + name] = Esps
