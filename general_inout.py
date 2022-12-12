@@ -305,7 +305,7 @@ def read_orca(filepath):
     #Check if optimization has converged normally (not inconvergence or out of time)
     #If so,return the final energy: energy + external potential
 
-    if exists(filepath) == False:
+    if os.path.exists(filepath) == False:
         return 'Failed'
 
     lines = open(filepath,'r').readlines()
@@ -339,6 +339,19 @@ def read_orca(filepath):
     else:
         return 'Failed'
 
+    
+    
+def record_xyz(filepath):
+    
+    if os.path.exists(filepath) == False:
+        return 'Failed'
+    
+    molecule = mol3D()
+    molecule.readfromxyz(filepath)
+    mol2 = molecule.writemol2('temp.mol',writestring = True)
+    
+    return mol2
+
 
 
 def make_dir(dirname):
@@ -351,6 +364,7 @@ def make_dir(dirname):
         print('directories already exist')
         sys.exit()
 
+        
         
  def analyze_spin(df,col1,col2,col3,name):
     
