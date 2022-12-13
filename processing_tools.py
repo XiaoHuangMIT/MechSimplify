@@ -35,25 +35,24 @@ def oct_check(df,lsname,isname,hsname):
     #Return number of oct and non-oct geometry of hs , (is) and ls: [lso,lsno] , ([iso,isno]), [hso,hsno] 
     #For Co2+: set isname to None
     lso,lsno,iso,isno,hso,hsno = 0,0,0,0,0,0
+    
     for i in np.arange(df.shape[0]):
+        
         lsmol2 = df.iloc[i][lsname]
         hsmol2 = df.iloc[i][hsname]
         ls3d,hs3d = mol3D(), mol3D()
         ls3d.readfrommol2(lsmol2,readstring=True)
         hs3d.readfrommol2(hsmol2,readstring=True)
+        
         if isname != None:
             ismol2 = df.iloc[i][isname]
             is3d = mol3D()
             is3d.readfrommol2(ismol2,readstring = True)
-        #IsOct can be buggy
-        try:
-            lslabel = ls3d.IsOct()[0]
-            hslabel = hs3d.IsOct()[0]
-            if isname != None:
+        lslabel = ls3d.IsOct()[0]
+        hslabel = hs3d.IsOct()[0]
+        if isname != None:
                 islabel = is3d.IsOct()[0]
-        except:
-            continue
-            
+        
         if lslabel == 1:
             lso += 1
             lsno += 0
