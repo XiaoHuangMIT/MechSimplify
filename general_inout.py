@@ -199,7 +199,7 @@ def get_tera_opt_out(filepath):
 
 
 
-def prep_orca_input(refcode, charge, spin, spinval, mol2, multiPP = None, dist_constraint = None, EFEI = None):
+def prep_orca_input(refcode, charge, spin, spinval, mol2, metal = None, multiPP = None, dist_constraint = None, EFEI = None):
 
 
     #Write orca EFEI geometry optimization input, including distance-constraint and force_modified variations, that
@@ -207,6 +207,7 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, multiPP = None, dist_c
     #Method by default:
     #B3LYP*(VMN5)-D3BJ: 0.15 a, 0.77b, 0.81c
     #Basis: def2-svp
+    #If metal is specified: used def2-tzvp
     #Solvent: gaseous phase
 
     #Inputs:
@@ -247,7 +248,7 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, multiPP = None, dist_c
         f.write('#SBATCH --mem=48GB\n')
         f.write('#SBATCH --time=48:00:00\n')
         f.write('#SBATCH --nodes=1\n')
-        f.write('#SBATCH --ntasks-per-node=32\n')
+        f.write('#SBATCH --ntasks-per-node=8\n')
         f.write('#SBATCH -p shared\n')
         f.write('#SBATCH -A TG-CHE140073\n')
         f.write('#SBATCH --export=ALL\n')
@@ -262,10 +263,10 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, multiPP = None, dist_c
         f.write('cd $SCRDIR\n')
         f.write('\n')
         f.write('ulimit -s unlimited\n')
-        f.write('export OMP_NUM_THREADS=32\n')
+        f.write('export OMP_NUM_THREADS=8\n')
         f.write('\n')
         f.write('$ORCAHOME/bin/orca ' + basename + '.in > $SLURM_SUBMIT_DIR/' + basename + '.out\n')
-        f.write('mv * $SLURM_SUBMIT_DIR/scr\n')
+        f.write('mv *.xyz $SLURM_SUBMIT_DIR/scr\n')
         f.write('\n')
         f.close()
 
@@ -273,12 +274,17 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, multiPP = None, dist_c
     with open(basename + '/' + basename + '.in', 'w') as f:
         f.write('! uks B3LYP D3BJ Opt def2-SVP\n')
         f.write('%method\n')
-        f.write('ScalHFX = 0.15\n') #0.15a, 0.77b, 0.81c, VMN5(default)
+        f.write('ScalHFX = 0.15\n') 
         f.write('ScalDFX = 0.77\n')
         f.write('ScalDFC = 0.81\n')
         f.write('ScalLDAC = 1\n')
         f.write('end\n')
-        f.write('%pal nprocs 32 end\n')
+        if metal != None:
+            f.write('%basis\n')
+            metal_basis = 'newgto ' + metal + ' "def2-TZVP" end\n'
+            f.write(metal_basis)
+            f.write('end\n')
+        f.write('%pal nprocs 8 end\n')
         if dist_constraint != None: #Geometry optimization with distance constraint (COGEF steps)
             f.write('%geom\n')
             f.write('Constraints\n')
