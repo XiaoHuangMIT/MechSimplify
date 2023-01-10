@@ -228,13 +228,14 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, metal = None, multiPP 
 
 
     #Obtaining base name
-    basename = refcode + '_' + spin
+    basename = refcode 
     if multiPP != None:
         basename = basename + '_' + str(multiPP[0]) + '_' + str(multiPP[1])
     if dist_constraint != None:
         basename = basename + '_' + str(dist_constraint[2])
     elif EFEI != None:
         basename = basename + '_' + str(EFEI[2])
+    basename = basename + '_' + spin
 
     #Make folder
     if not os.path.exists(basename + '/'):
