@@ -1,6 +1,7 @@
 import numpy as np 
 import pandas as pd
 import matplotlib.pyplot as plt
+from molSimplify.Classes.mol3D import mol3D
 
 
 def separate_metal_and_charge(df, count_only = False):
