@@ -109,3 +109,5 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, metal = None, multiPP 
     molecule = mol3D()
     molecule.readfrommol2(mol2,readstring=True)
     molecule.writexyz(basename + '/' + basename + '.xyz',symbsonly=True)
+
+    Problem: .in!
