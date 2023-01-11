@@ -53,7 +53,7 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, metal = None, multiPP 
         f.write('#!/usr/bin/env bash\n')
         f.write('#SBATCH --job-name=' + basename + '\n')
         f.write('#SBATCH --output=' + basename + '.out' + '\n')
-        f.write('#SBATCH --mem=48GB\n')
+        f.write('#SBATCH --mem=16GB\n')
         f.write('#SBATCH --time=48:00:00\n')
         f.write('#SBATCH --nodes=1\n')
         f.write('#SBATCH --ntasks-per-node=8\n')
