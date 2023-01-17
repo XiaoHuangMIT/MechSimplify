@@ -56,7 +56,7 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, metal = None, multiPP 
         f.write('#SBATCH --mem-per-cpu=4gb\n')
         f.write('#SBATCH --time=48:00:00\n')
         f.write('#SBATCH --ntasks=8\n')
-        f.write('#SBATCH --export=*.xyz\n')
+        f.write('#SBATCH --export=ALL\n')
         f.write('\n')
         f.write('module load mpi/openmpi-4.1.1\n')
         f.write('export PATH=/home/gridsan/xiaohuang/orca:$PATH\n')
