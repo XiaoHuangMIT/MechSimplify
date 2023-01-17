@@ -25,7 +25,7 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, metal = None, multiPP 
     #mol2: mol2 string of molecule to be written into xyz
 
     #multiPP: if the molecule has more than one pair of pulling points
-    #format: None/[pp1idx,pp2idx]
+    #format: None/[pp1idx,pp2idx,force]
 
     #dist_constraint: if optimization with distance constraint between two atoms (pps) should be performed
     #format: None/[pp1idx,pp2idx,distance(A)]
