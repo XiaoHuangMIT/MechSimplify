@@ -56,7 +56,7 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, metal = None, multiPP 
         f.write('#SBATCH --mem-per-cpu=4gb\n')
         f.write('#SBATCH --time=48:00:00\n')
         f.write('#SBATCH --ntasks=8\n')
-        f.write('#SBATCH --export=ALL\n')
+        f.write('#SBATCH --export=*.xyz\n')
         f.write('\n')
         f.write('module load mpi/openmpi-4.1.1\n')
         f.write('export PATH=/home/gridsan/xiaohuang/orca:$PATH\n')
@@ -72,7 +72,7 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, metal = None, multiPP 
         f.write('export OMP_NUM_THREADS=8\n')
         f.write('\n')
         f.write('/home/gridsan/xiaohuang/orca/orca ' + basename + '.in > $SLURM_SUBMIT_DIR/' + basename + '.out\n')
-        f.write('mv *.xyz $SLURM_SUBMIT_DIR/scr\n')
+        f.write('mv $SLURM_SUBMIT_DIR/scr\n')
         f.write('\n')
         f.close()
 
@@ -110,4 +110,3 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, metal = None, multiPP 
     molecule.readfrommol2(mol2,readstring=True)
     molecule.writexyz(basename + '/' + basename + '.xyz',symbsonly=True)
 
-    Problem: .in!
