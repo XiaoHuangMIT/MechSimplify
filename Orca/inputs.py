@@ -6,7 +6,7 @@ from molSimplify.Classes.mol3D import mol3D
 from molSimplify.Classes.atom3D import atom3D #distance
 from molSimplify.job_manager.manager_io import read_outfile
 
-def prep_orca_input(refcode, charge, spin, spinval, mol2, metal = None, multiPP = None, dist_constraint = None, EFEI = None):
+def prep_orca_input(refcode, charge, spin, spinval, mol2, machine, metal = None, multiPP = None, dist_constraint = None, EFEI = None):
 
 
     #Write orca EFEI geometry optimization input, including distance-constraint and force_modified variations, that
@@ -23,6 +23,7 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, metal = None, multiPP 
     #spin: LS/IS/HS
     #spinval: 1/3/5 (ex: Fe2+)
     #mol2: mol2 string of molecule to be written into xyz
+    #machine: expanse or supercloud
 
     #multiPP: if the molecule has more than one pair of pulling points
     #format: None/[pp1idx,pp2idx,force]
@@ -50,32 +51,59 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, metal = None, multiPP 
 
     #Generating jobscript:
     with open(basename + '/' + basename + '_jobscript', 'w') as f:
-        f.write('#!/usr/bin/env bash\n')
-        f.write('#SBATCH --job-name=' + basename + '\n')
-        f.write('#SBATCH --output=' + basename + '.out' + '\n')
-        f.write('#SBATCH --mem=16GB\n')
-        f.write('#SBATCH --time=48:00:00\n')
-        f.write('#SBATCH --nodes=1\n')
-        f.write('#SBATCH --ntasks-per-node=8\n')
-        f.write('#SBATCH -p shared\n')
-        f.write('#SBATCH -A TG-CHE140073\n')
-        f.write('#SBATCH --export=ALL\n')
-        f.write('\n')
-        f.write('module load cpu/0.15.4  gcc/9.2.0  openmpi/4.1.1 orca/5.0.1\n')
-        f.write('\n')
-        f.write('# Change to working directory\n')
-        f.write('export SCRDIR=/scratch/$USER/job_$SLURM_JOB_ID\n')
-        #f.write('cp $SLURM_SUBMIT_DIR/' + basename + '.in ' + '$SCRDIR\n') check again
-        f.write('cp $SLURM_SUBMIT_DIR/* $SCRDIR\n')
-        f.write('mkdir $SLURM_SUBMIT_DIR/scr\n')
-        f.write('cd $SCRDIR\n')
-        f.write('\n')
-        f.write('ulimit -s unlimited\n')
-        f.write('export OMP_NUM_THREADS=8\n')
-        f.write('\n')
-        f.write('$ORCAHOME/bin/orca ' + basename + '.in > $SLURM_SUBMIT_DIR/' + basename + '.out\n')
-        f.write('mv $SLURM_SUBMIT_DIR/scr\n')
-        f.write('\n')
+        if machine == expanse:
+            f.write('#!/usr/bin/env bash\n')
+            f.write('#SBATCH --job-name=' + basename + '\n')
+            f.write('#SBATCH --output=' + basename + '.out' + '\n')
+            f.write('#SBATCH --mem=16GB\n')
+            f.write('#SBATCH --time=48:00:00\n')
+            f.write('#SBATCH --nodes=1\n')
+            f.write('#SBATCH --ntasks-per-node=8\n')
+            f.write('#SBATCH -p shared\n')
+            f.write('#SBATCH -A TG-CHE140073\n')
+            f.write('#SBATCH --export=ALL\n')
+            f.write('\n')
+            f.write('module load cpu/0.15.4  gcc/9.2.0  openmpi/4.1.1 orca/5.0.1\n')
+            f.write('\n')
+            f.write('# Change to working directory\n')
+            f.write('export SCRDIR=/scratch/$USER/job_$SLURM_JOB_ID\n')
+            #f.write('cp $SLURM_SUBMIT_DIR/' + basename + '.in ' + '$SCRDIR\n') check again
+            f.write('cp $SLURM_SUBMIT_DIR/* $SCRDIR\n')
+            f.write('mkdir $SLURM_SUBMIT_DIR/scr\n')
+            f.write('cd $SCRDIR\n')
+            f.write('\n')
+            f.write('ulimit -s unlimited\n')
+            f.write('export OMP_NUM_THREADS=8\n')
+            f.write('\n')
+            f.write('$ORCAHOME/bin/orca ' + basename + '.in > $SLURM_SUBMIT_DIR/' + basename + '.out\n')
+            f.write('mv $SLURM_SUBMIT_DIR/scr\n')
+            f.write('\n')
+        elif machine == supercloud:
+            f.write('#!/bin/bash\n')
+            f.write('#SBATCH --job-name=' + basename + '\n')
+            f.write('#SBATCH --output=' + basename + '.out' + '\n')
+            f.write('#SBATCH --mem-per-cpu=4gb\n')
+            f.write('#SBATCH --time=48:00:00\n')
+            f.write('#SBATCH --ntasks=8\n')
+            f.write('#SBATCH --export=ALL\n')
+            f.write('\n')
+            f.write('module load mpi/openmpi-4.1.1\n')
+            f.write('export PATH=/home/gridsan/xiaohuang/orca:$PATH\n')
+            f.write('export LD_LIBRARY_PATH=/home/gridsan/xiaohuang/orca:$LD_LIBRARY_PATH\n')
+            f.write('\n')
+            f.write('# Change to working directory\n')
+            f.write('export SCRDIR=/scratch/$USER/job_$SLURM_JOB_ID\n')
+            #f.write('cp $SLURM_SUBMIT_DIR/' + basename + '.in ' + '$SCRDIR\n') check again
+            f.write('cp $SLURM_SUBMIT_DIR/* $SCRDIR\n')
+            f.write('mkdir $SLURM_SUBMIT_DIR/scr\n')
+            f.write('cd $SCRDIR\n')
+            f.write('\n')
+            f.write('export OMP_NUM_THREADS=8\n')
+            f.write('\n')
+            f.write('/home/gridsan/xiaohuang/orca/orca ' + basename + '.in > $SLURM_SUBMIT_DIR/' + basename + '.out\n')
+            f.write('rm *.tmp\n')
+            f.write('\n')
+           
         f.close()
 
     #Generating inputs
