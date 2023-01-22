@@ -87,3 +87,61 @@ def check_dissociation(filepath,threshold = 5,return_list=False):
         return result,checks
     else:
         return result
+ 
+ 
+ 
+ def analyze_efei_expanse(basename):
+
+    #Analyze an EFEI job being performed on expanse given the current configuration:
+    #basename/basename.out, scr/basename.xyz(being overwritten after optimization), basename_trj.xyz
+    #basename: refcode_aps_LS/IS/HS
+    #First check: has the job succeeded. If so, record basename.xyz as mol2 of optimized molecule
+    #Then check: has the molecule broken.
+    #Lastly,if broken and job failed, change  energy and mol2 from 'Failed' to 'Diss'
+
+    energy = read_orca(basename + '/' + basename + '.out')
+    mol2 = 'Failed'
+    if energy != 'Failed':
+        mol2 = record_xyz(basename + '/scr/' + basename + '.xyz')
+
+    has_dis = False
+    if path.exists(basename + '/scr/' + basename + '_trj.xyz'):
+        has_dis = check_dissociation(basename + '/scr/' + basename + '_trj.xyz')
+
+    if has_dis == True:
+        if energy == 'Failed':
+            energy = 'Diss'
+        if mol2 == 'Failed':
+            mol2 = 'Diss'
+    if has_dis == 'Not enough frames': #Makes cases less complex
+        has_dis = False
+    return energy, mol2, has_dis
+
+
+
+def analyze_efei_supercloud(basename):
+
+    #Analyze an EFEI job being performed on supercloud given the current configuration:
+    #basename/basename.out, basename.xyz(being overwritten after optimization), basename_trj.xyz
+    #basename: refcode_aps_LS/IS/HS
+    #First check: has the job succeeded. If so, record basename.xyz as mol2 of optimized molecule
+    #Then check: has the molecule broken.
+    #Lastly,if broken and job failed, change  energy and mol2 from 'Failed' to 'Diss'
+
+    energy = read_orca(basename + '/' + basename + '.out')
+    mol2 = 'Failed'
+    if energy != 'Failed':
+        mol2 = record_xyz(basename + '/' + basename + '.xyz')
+
+    has_dis = False
+    if path.exists(basename + '/' + basename + '_trj.xyz'):
+        has_dis = check_dissociation(basename + '/' + basename + '_trj.xyz')
+
+    if has_dis == True:
+        if energy == 'Failed':
+            energy = 'Diss'
+        if mol2 == 'Failed':
+            mol2 = 'Diss'
+    if has_dis == 'Not enough frames': #Makes cases less complex
+        has_dis = False
+    return energy, mol2, has_dis
