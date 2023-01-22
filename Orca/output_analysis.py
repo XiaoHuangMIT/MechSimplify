@@ -102,7 +102,7 @@ def find_opt_frames(filepath,natoms):
 
 
 
-def check_diss_by_out(basename,threshold = 5,return_list = False):
+def check_diss_by_out(basename,threshold = 10,return_list = False):
     
     natoms = open(basename + '/' + basename + '.xyz','r').readlines()[0].split()[0]
     natoms = int(natoms)
@@ -142,7 +142,7 @@ def check_diss_by_out(basename,threshold = 5,return_list = False):
 
 
 
-def analyze_efei_expanse(basename, thres=5, record_failed_mol2 = True):
+def analyze_efei_expanse(basename, thres=10, record_failed_mol2 = True):
 
     #Analyze an EFEI job being performed on expanse given the current configuration:
     #basename/basename.out
