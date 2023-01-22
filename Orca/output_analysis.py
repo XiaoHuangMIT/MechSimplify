@@ -315,3 +315,14 @@ for i in indexes:
     dis_ls.append(disls)
     dis_is.append(disis)
     dis_hs.append(dishs)
+    
+df['round1_force'] = r1_fs
+df['round1_Els'] = E_ls
+df['round1_Eis'] = E_is
+df['round1_Ehs'] = E_hs
+df['round1_mol2ls'] = mol2_ls
+df['round1_mol2is'] = mol2_is
+df['round1_mol2hs'] = mol2_hs
+df['round1_diss_ls'] = dis_ls
+df['round1_diss_is'] = dis_is
+df['round1_diss_hs'] = dis_hs
