@@ -142,29 +142,45 @@ def check_diss_by_out(basename,threshold = 5,return_list = False):
 
 
 
-def analyze_efei_expanse(basename, thres=5):
+def analyze_efei_expanse(basename, thres=5, record_failed_mol2 = True):
 
     #Analyze an EFEI job being performed on expanse given the current configuration:
     #basename/basename.out
     #basename: refcode_aps_LS/IS/HS
+    #record_failed_mol2: if a job has failed (neither converge or dissociated)
+    #we could record the last mol2 as re-run initial structure
     #First check: has the job succeeded. If so, record basename.xyz as mol2 of optimized molecule
     #Then check: has the molecule broken.
     #Lastly,if broken and job failed, change  energy and mol2 from 'Failed' to 'Diss'
 
+    #Record energy (from .out)
     energy = read_orca(basename + '/' + basename + '.out')
-    mol2 = 'Failed'
-    if energy != 'Failed':
-        mol2 = record_xyz(basename + '/scr/' + basename + '.xyz')
 
+    #Record mol2 (from .out)
+    natoms = open(basename + '/' + basename + '.xyz','r').readlines()[0].split()[0]
+    natoms = int(natoms)
+    frames = find_opt_frames(basename + '/' + basename + '.out',natoms)
+    file = open('temp_rec.xyz', 'w')
+    file.writelines(str(natoms) + '\n')
+    file.writelines('\n')
+    file.writelines(frames[-1])
+    file.close()
+    mol_rec = mol3D()
+    mol_rec.readfromxyz('temp_rec.xyz')
+    mol2 = mol_rec.writemol2('temp_rec.mol',writestring = True)
+
+    #Check if the molecule has dissociated (don`t call an diss job 'failed')
     has_dis = check_diss_by_out(basename,threshold=thres)
+    if has_dis == True and energy == 'Failed':
+        energy = 'Diss'
 
-    if has_dis == True:
+    if record_failed_mol2 == False:
         if energy == 'Failed':
-            energy = 'Diss'
-        if mol2 == 'Failed':
-            mol2 = 'Diss'
-            
-    return energy, mol2, has_dis
+            return energy, 'Failed', has_dis
+        elif energy == 'Diss':
+            return energy, 'Diss', has_dis
+    else:
+        return energy, mol2, has_dis
 
 
 
