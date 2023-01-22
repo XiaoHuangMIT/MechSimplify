@@ -294,6 +294,11 @@ for i in indexes:
         #mol2ls = record_xyz(refname + '_LS' + aps + '/scr/' + refname + '_LS' + aps + '.xyz')
         #df.at[i,'Els'] = Els
         #df.at[i,'mol2ls'] = mol2ls    
+    #if row['round1_Els'] == 'Failed':
+        #Els,mol2ls,disls = analyze_efei_expanse(refname + '_LS')
+        #df.at[i,'round1_Els'] = Els
+        #df.at[i,'round1_mol2ls'] = mol2ls
+        #df.at[i,'round1_diss_ls'] = disls
 
     #Record all recording    
     r1_fs.append(1)
