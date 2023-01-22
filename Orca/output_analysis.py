@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from molSimplify.Classes.mol3D import mol3D
 from molSimplify.Classes.atom3D import atom3D #distance
+from molSimplify.Classes.ligand import ligand_breakdown
 from molSimplify.job_manager.manager_io import read_outfile
 
 
@@ -80,79 +81,55 @@ def make_dir(dirname):
 
      
     
- def find_nth_xyz(filepath,nth):
-
-    #Find nth structure from a scan/trajectory xyz file
-    #Stores as an temp.xyz file
-
-    file = open(filepath, 'r')
-    lines = file.readlines()
-
-    #Count number of atoms of molecule
-    num_atoms = lines[0].split()[0]
-    num_atoms = int(num_atoms)
-
-    #Count number of frames
-    #Each frame num lines: num_atoms + 2 header
-    num_lines = num_atoms+2
-    num_frames = len(lines)/(num_lines)
-    num_frames = int(num_frames)
-
-    #Number of lines to read: 2 + number of atoms
-    first_line = (nth - 1)  * num_lines
-    lines_output = lines[first_line:first_line+num_lines]
-    file2 = open('temp_nth.xyz', 'w')
-    file2.writelines(lines_output)
-    file2.close()
-
+def find_opt_frames(filepath,natoms):
     
+    if os.path.exists(filepath) == False:
+        return 'Failed'
 
-def count_num_frames(filepath):
-
-    #Count how many structures are in a scan/trajectory xyz file
-    #Returned running: if xyz is being written right now
-
-    file = open(filepath, 'r')
-    lines = file.readlines()
-
-    #Count number of atoms of molecule
-    num_atoms = lines[0].split()[0]
-    num_atoms = int(num_atoms)
-
-    #Count number of frames
-    #Each frame num lines: num_atoms + 2 header
-    num_lines = num_atoms+2
-    num_frames = len(lines)/(num_lines)
-    if int(num_frames) == num_frames:
-        return int(num_frames)
-    else:
-        return 'running'
-
-
+    lines = open(filepath,'r').readlines()
+    xyzs = []
+    for linenum in np.arange(len(lines)): 
+        if 'CARTESIAN COORDINATES (ANGSTROEM)' in lines[linenum]: #xyz beginning two lines later
+            firstline = linenum + 2
+            lastline = firstline + natoms - 1
+            xyz = []
+            for i in np.arange(firstline,lastline+1):
+                xyz.append(lines[i].lstrip())
+            xyzs.append(xyz)
+    xyzs.pop()#n cycles: n+1 structures, so drop last one
     
-def check_dissociation(filepath,threshold = 5,return_list=False):
+    return xyzs
 
-    #Check if we can conclude that an EFEI opt resulted in dissociation
-    #If for the last num threshold jobs, the molecule has been dissociated as indicated by molSimplify
-    #we can then end the jobd
-    #Default threshold is 5
 
-    nframes = count_num_frames(filepath)
-    if threshold > nframes:
-        return 'Not enough frames'
 
-    frame_nums = np.arange(nframes-threshold+1, nframes+1)
+def check_diss_by_out(basename,threshold = 5,return_list = False):
+    
+    natoms = open(basename + '/' + basename + '.xyz','r').readlines()[0].split()[0]
+    natoms = int(natoms)
+    
+    frames = find_opt_frames(basename + '/' + basename + '.out', natoms)
+    if threshold > len(frames):
+        return False
+    
     checks = []
-    for i in frame_nums:
-        find_nth_xyz(filepath,i)
+    nframes = len(frames)
+    first_frame = nframes - threshold + 1
+    
+    for i in np.arange(first_frame,nframes+1):
+        file = open('temp_n.xyz', 'w')
+        file.writelines(str(natoms) + '\n')
+        file.writelines('\n')
+        file.writelines(frames[i-1])
+        file.close()
+        
         mol = mol3D()
-        mol.readfromxyz('temp_nth.xyz')
+        mol.readfromxyz('temp_n.xyz')
         l1,l2,l3 = ligand_breakdown(mol)
         check = 'intact'
         if l2 != [3,3]:
             check = 'diss'
-        checks.append(check)
-
+        checks.append(check) 
+    
     result = True
     for check in checks:
         if check == 'intact':
@@ -165,10 +142,10 @@ def check_dissociation(filepath,threshold = 5,return_list=False):
 
 
 
-def analyze_efei_expanse(basename):
+def analyze_efei_expanse(basename, thres=5):
 
     #Analyze an EFEI job being performed on expanse given the current configuration:
-    #basename/basename.out, scr/basename.xyz(being overwritten after optimization), basename_trj.xyz
+    #basename/basename.out
     #basename: refcode_aps_LS/IS/HS
     #First check: has the job succeeded. If so, record basename.xyz as mol2 of optimized molecule
     #Then check: has the molecule broken.
@@ -179,22 +156,19 @@ def analyze_efei_expanse(basename):
     if energy != 'Failed':
         mol2 = record_xyz(basename + '/scr/' + basename + '.xyz')
 
-    has_dis = False
-    if path.exists(basename + '/scr/' + basename + '_trj.xyz'):
-        has_dis = check_dissociation(basename + '/scr/' + basename + '_trj.xyz')
+    has_dis = check_diss_by_out(basename,threshold=thres)
 
     if has_dis == True:
         if energy == 'Failed':
             energy = 'Diss'
         if mol2 == 'Failed':
             mol2 = 'Diss'
-    if has_dis == 'Not enough frames': #Makes cases less complex
-        has_dis = False
+            
     return energy, mol2, has_dis
 
 
 
-def analyze_efei_supercloud(basename):
+def analyze_efei_supercloud(basename,thres=5):
 
     #Analyze an EFEI job being performed on supercloud given the current configuration:
     #basename/basename.out, basename.xyz(being overwritten after optimization), basename_trj.xyz
@@ -208,17 +182,14 @@ def analyze_efei_supercloud(basename):
     if energy != 'Failed':
         mol2 = record_xyz(basename + '/' + basename + '.xyz')
 
-    has_dis = False
-    if path.exists(basename + '/' + basename + '_trj.xyz'):
-        has_dis = check_dissociation(basename + '/' + basename + '_trj.xyz')
+    has_dis = check_diss_by_out(basename,threshold=thres)
 
     if has_dis == True:
         if energy == 'Failed':
             energy = 'Diss'
         if mol2 == 'Failed':
             mol2 = 'Diss'
-    if has_dis == 'Not enough frames': #Makes cases less complex
-        has_dis = False
+
     return energy, mol2, has_dis
 
 
