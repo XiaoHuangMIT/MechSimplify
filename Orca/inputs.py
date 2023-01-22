@@ -13,7 +13,7 @@ from molSimplify.job_manager.manager_io import read_outfile
 #########################################################################################################################################################
 
 
-def prep_orca_input(refcode, charge, spin, spinval, mol2, machine, metal = None, multiPP = None, dist_constraint = None, EFEI = None):
+def prep_orca_input(refcode, charge, spin, spinval, mol2, machine, metal = None, multiPP = None, round = None, dist_constraint = None, EFEI = None):
 
 
     #Write orca EFEI geometry optimization input, including distance-constraint and force_modified variations, that
@@ -34,6 +34,9 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, machine, metal = None,
 
     #multiPP: if the molecule has more than one pair of pulling points
     #format: None/[pp1idx,pp2idx,force]
+    
+    #round: name the job based on the number of EFEI rounds instead of magnitude of force
+    #format: round2/3/4...
 
     #dist_constraint: if optimization with distance constraint between two atoms (pps) should be performed
     #format: None/[pp1idx,pp2idx,distance(A)]
@@ -46,10 +49,13 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, machine, metal = None,
     basename = refcode 
     if multiPP != None:
         basename = basename + '_' + str(multiPP[0]) + '_' + str(multiPP[1])
-    if dist_constraint != None:
-        basename = basename + '_' + str(dist_constraint[2])
-    elif EFEI != None:
-        basename = basename + '_' + str(EFEI[2])
+    if round != None:
+        basename = basename + '_' + round
+    else:
+        if dist_constraint != None:
+         basename = basename + '_' + str(dist_constraint[2])
+        elif EFEI != None:
+            basename = basename + '_' + str(EFEI[2])
     basename = basename + '_' + spin
 
     #Make folder
