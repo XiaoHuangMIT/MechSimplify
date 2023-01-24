@@ -19,4 +19,5 @@ df = pd.merge(df,df_15vvt,how='outer',on='refcode')
 df1 = pd.read_csv('round1_e_finished.csv')
 df2 = pd.read_csv('round1_scre_finished.csv')
 df = pd.concat([df1,df2],axis=0)
+#See: https://pandas.pydata.org/docs/reference/api/pandas.concat.html
 #Combine DataFrame objects with overlapping columns and return everything. Columns outside the intersection will be filled with NaN values
