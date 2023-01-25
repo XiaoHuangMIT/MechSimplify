@@ -160,40 +160,43 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, machine, metal = None,
 #########################################################################################################################################################
 
 
+df = pd.read_csv('round2_in.csv')
+
 indexs = df.index.values
-    for idx in indexs:
+for idx in indexs:
 
-        row = df.loc[idx]
-        refcode = row['refcode']
-        metal,charge = row['metal'], int(row['ox_csd'])
-        mol2ls,mol2is,mol2hs = row['round1_mol2ls'], row['round1_mol2is'], row['round1_mol2hs']
-        pp1,pp2 = row['pp1'],row['pp2']
-        multiap = None
-        if float(row['apnum']) != 1:
-            ap1,ap2 = row['ap1'],row['ap2']
-            multiap = [ap1,ap2]
-        efei_param = [pp1,pp2,float(row['round2_force'])]
+    row = df.loc[idx]
+    refcode = row['refcode']
+    metal,charge = row['metal'], int(row['ox_csd'])
+    mol2ls,mol2is,mol2hs = row['round1_mol2ls'], row['round1_mol2is'], row['round1_mol2hs']
+    pp1,pp2 = row['pp1'],row['pp2']
+    multiap = None
+    if float(row['apnum']) != 1:
+        ap1,ap2 = row['ap1'],row['ap2']
+        multiap = [ap1,ap2]
+    efei_param = [pp1,pp2,float(row['round2_force'])]
 
-        if metal == 'Fe' and charge == 2:
-            prep_orca_input(refcode,charge,'LS',1,mol2ls,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
-            prep_orca_input(refcode,charge,'IS',3,mol2is,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
-            prep_orca_input(refcode,charge,'HS',5,mol2hs,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
 
-        elif metal == 'Fe' and charge == 3:
-            prep_orca_input(refcode,charge,'LS',2,mol2ls,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
-            prep_orca_input(refcode,charge,'IS',4,mol2is,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
-            prep_orca_input(refcode,charge,'HS',6,mol2hs,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
+    if metal == 'Fe' and charge == 2:
+        prep_orca_input(refcode,charge,'LS',1,mol2ls,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
+        prep_orca_input(refcode,charge,'IS',3,mol2is,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
+        prep_orca_input(refcode,charge,'HS',5,mol2hs,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
 
-        elif metal == 'Co' and charge == 2:
-            prep_orca_input(refcode,charge,'LS',2,mol2ls,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
-            prep_orca_input(refcode,charge,'HS',4,mol2hs,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
+    elif metal == 'Fe' and charge == 3:
+        prep_orca_input(refcode,charge,'LS',2,mol2ls,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
+        prep_orca_input(refcode,charge,'IS',4,mol2is,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
+        prep_orca_input(refcode,charge,'HS',6,mol2hs,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
 
-        elif metal == 'Co' and charge == 3:
-            prep_orca_input(refcode,charge,'LS',1,mol2ls,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
-            prep_orca_input(refcode,charge,'IS',3,mol2is,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
-            prep_orca_input(refcode,charge,'HS',5,mol2hs,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
+    elif metal == 'Co' and charge == 2:
+        prep_orca_input(refcode,charge,'LS',2,mol2ls,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
+        prep_orca_input(refcode,charge,'HS',4,mol2hs,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
 
-        elif metal == 'Mn' and charge == 2:
-            prep_orca_input(refcode,charge,'LS',2,mol2ls,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
-            prep_orca_input(refcode,charge,'IS',4,mol2is,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
-            prep_orca_input(refcode,charge,'HS',6,mol2hs,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
+    elif metal == 'Co' and charge == 3:
+        prep_orca_input(refcode,charge,'LS',1,mol2ls,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
+        prep_orca_input(refcode,charge,'IS',3,mol2is,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
+        prep_orca_input(refcode,charge,'HS',5,mol2hs,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
+
+    elif metal == 'Mn' and charge == 2:
+        prep_orca_input(refcode,charge,'LS',2,mol2ls,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
+        prep_orca_input(refcode,charge,'IS',4,mol2is,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
+        prep_orca_input(refcode,charge,'HS',6,mol2hs,'expanse',metal=metal,multiPP=multiap,round='round2', EFEI = efei_param)
