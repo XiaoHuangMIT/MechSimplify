@@ -48,7 +48,7 @@ def round_result(df,idx,n,is_co2=False):
   
   
   
-  def force_second_round(df,idx):
+def force_second_round(df,idx):
     
     #Based on spin and dissociation status of round 1(1nN), derive whether or not to perform round 2
     #and if to perform, the magnitude of force, with regarding to complex at df.loc[idx]
