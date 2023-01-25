@@ -33,9 +33,9 @@ def round_result(df,idx,n,is_co2=False):
         spin = df1['Spin'].iloc[0]
            
     #Check if the molecule has dissociated in at least one state
-    dissls = df.loc[idx][roundn + 'diss_ls']
-    dissis = df.loc[idx][roundn + 'diss_is']
-    disshs = df.loc[idx][roundn + 'diss_hs']
+    dissls = df.loc[idx][roundn + '_diss_ls']
+    dissis = df.loc[idx][roundn + '_diss_is']
+    disshs = df.loc[idx][roundn + '_diss_hs']
     if type(dissls) != bool or type(dissis) != bool or type(disshs) != bool:#sanity check
         diss = False
     diss = dissls or dissis or disshs
