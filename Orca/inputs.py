@@ -64,7 +64,7 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, machine, metal = None,
 
     #Generating jobscript:
     with open(basename + '/' + basename + '_jobscript', 'w') as f:
-        if machine == expanse:
+        if machine == 'expanse':
             f.write('#!/usr/bin/env bash\n')
             f.write('#SBATCH --job-name=' + basename + '\n')
             f.write('#SBATCH --output=' + basename + '.out' + '\n')
@@ -91,7 +91,7 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, machine, metal = None,
             f.write('$ORCAHOME/bin/orca ' + basename + '.in > $SLURM_SUBMIT_DIR/' + basename + '.out\n')
             f.write('mv * $SLURM_SUBMIT_DIR/scr\n')
             f.write('\n')
-        elif machine == supercloud:
+        elif machine == 'supercloud':
             f.write('#!/bin/bash\n')
             f.write('#SBATCH --job-name=' + basename + '\n')
             f.write('#SBATCH --output=' + basename + '.out' + '\n')
