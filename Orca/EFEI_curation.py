@@ -137,6 +137,8 @@ def force_nth_round(df,idx,n,threshold=5):
     if result == 0:
         if spin_curr == 'IS' or spin_curr == 'HS':
             result = 'SCO 0 0.5'
+        elif df.loc[idx]['round1_diss'] == True:  #Problem found: diss in 1.0nN, LS in 0.5nN
+            result = 'concluded nonSCO'
     if type(result) != str and result > threshold:
         return 'concluded-threshold nonSCO'
     
