@@ -96,7 +96,9 @@ def find_opt_frames(filepath,natoms):
             for i in np.arange(firstline,lastline+1):
                 xyz.append(lines[i].lstrip())
             xyzs.append(xyz)
-    xyzs.pop()#n cycles: n+1 structures, so drop last one
+    
+    if len(xyz) > 0:
+        xyzs.pop()#n cycles: n+1 structures, so drop last one
 
     return xyzs
 
