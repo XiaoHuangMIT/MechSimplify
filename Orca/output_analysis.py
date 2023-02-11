@@ -233,7 +233,10 @@ def find_spin_delocalization(filename,metal=None):
             l.append(i)
         elif 'Sum of atomic spin populations' in lines[i]:
             ltotal.append(i)
-            
+    
+    if len(l) == 0 or len(ltotal) == 0:
+        return 'Failed'
+    
     lastflag = l[-1]
     metalspin = lines[lastflag+2].split()[-1]#default: first line after flag is metal
     totalspin = lines[ltotal[0]].split()[-1]
