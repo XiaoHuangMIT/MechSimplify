@@ -216,6 +216,33 @@ def analyze_efei_supercloud(basename,thres=5):
 
 
 
+def find_spin_delocalization(filename,metal=None):
+    
+    #Check if spin if significantly delocalized away from metal
+    #Return the amount of spin that is not on metal
+    #Inputs:
+    #If metal is None: analyze first row by default
+    #If metal is not None: search and check which row metal is on
+    
+    lines = open(filename,'r').readlines()
+    l = [] #indexes of lines that contain 'MULLIKEN ATOMIC CHARGES AND SPIN POPULATIONS'
+    ltotal = [] #indexes of lines that contain 'Sum of atomic spin populations'
+    
+    for i in np.arange(len(lines)):
+        if 'MULLIKEN ATOMIC CHARGES AND SPIN POPULATIONS' in lines[i]:
+            l.append(i)
+        elif 'Sum of atomic spin populations' in lines[i]:
+            ltotal.append(i)
+            
+    lastflag = l[-1]
+    metalspin = lines[lastflag+2].split()[-1]#default: first line after flag is metal
+    totalspin = lines[ltotal[0]].split()[-1]
+    spindiff = float(totalspin) - float(metalspin)
+    
+    return spindiff
+
+
+
  def analyze_spin(df,col1,col2,col3,name):
     
     #Analyze the ground, second and highest spin of molecules recorded in dataframe
