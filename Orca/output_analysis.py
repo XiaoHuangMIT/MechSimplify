@@ -155,6 +155,9 @@ def analyze_efei_expanse(basename, thres=10, record_failed_mol2 = True):
     #Then check: has the molecule broken.
     #Lastly,if broken and job failed, change  energy and mol2 from 'Failed' to 'Diss'
 
+    if os.path.exists(basename) == False: #Helper case: if the molecule has not been analyzed
+        return 'Failed','Failed','Failed'
+    
     #Record energy (from .out)
     energy = read_orca(basename + '/' + basename + '.out')
 
