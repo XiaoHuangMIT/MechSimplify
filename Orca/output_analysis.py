@@ -216,13 +216,10 @@ def analyze_efei_supercloud(basename,thres=5):
 
 
 
-def find_spin_delocalization(filename,metal=None):
+def find_spin_delocalization(filename,metal):
     
     #Check if spin if significantly delocalized away from metal
     #Return the amount of spin that is not on metal
-    #Inputs:
-    #If metal is None: analyze first row by default
-    #If metal is not None: search and check which row metal is on
     
     if os.path.exists(filename) == False:
         return 'Failed'
@@ -241,8 +238,14 @@ def find_spin_delocalization(filename,metal=None):
         return 'Failed'
     
     lastflag = l[-1]
-    metalspin = lines[lastflag+2].split()[-1]#default: first line after flag is metal
     totalspin = lines[ltotal[0]].split()[-1]
+    
+    #Finding the next line that contains the name of metal after the line of last flag
+    for j in np.arange(lastflag,len(lines)):
+        if metal in lines[j]:
+            metalspin = lines[j].split()[-1]
+            break
+            
     spindiff = float(totalspin) - float(metalspin)
     
     return spindiff
