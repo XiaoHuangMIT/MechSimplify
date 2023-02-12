@@ -225,7 +225,7 @@ def find_spin_delocalization(filename,metal=None):
     #If metal is not None: search and check which row metal is on
     
     if os.path.exists(filename) == False:
-        return 'Failed
+        return 'Failed'
     
     lines = open(filename,'r').readlines()
     l = [] #indexes of lines that contain 'MULLIKEN ATOMIC CHARGES AND SPIN POPULATIONS'
