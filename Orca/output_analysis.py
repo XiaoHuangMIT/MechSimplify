@@ -104,7 +104,11 @@ def find_opt_frames(filepath,natoms):
 
 
 
-def check_diss_by_out(basename,threshold = 10,return_list = False):
+def check_diss_by_out(basename,check_geom_shift = False, threshold = 10,return_list = False):\
+
+    #If check_geom_shift = True:
+    #Regard geometry shifting such as to tetrahedral etc also as dissociation
+    #If not: only consider cases when only one ligand stay bonded as dissociation
 
     natoms = open(basename + '/' + basename + '.xyz','r').readlines()[0].split()[0]
     natoms = int(natoms)
@@ -128,8 +132,12 @@ def check_diss_by_out(basename,threshold = 10,return_list = False):
         mol.readfromxyz('temp_n.xyz')
         l1,l2,l3 = ligand_breakdown(mol)
         check = 'intact'
-        if l2 != [3,3]:
-            check = 'diss'
+        if check_geom_shift == False:
+            if len(l2) < 2:
+                check = 'diss'
+        else:
+            if l2 != [3,3]:
+                check = 'diss'
         checks.append(check)
 
     result = True
