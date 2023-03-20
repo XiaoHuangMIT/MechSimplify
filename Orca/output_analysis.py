@@ -317,7 +317,8 @@ def find_spin_delocalization(filename,metal):
 
 
 
-r1_fs,E_ls,E_is,E_hs,mol2_ls,mol2_is,mol2_hs,dis_ls,dis_is,dis_hs = [],[],[],[],[],[],[],[],[],[]
+E_ls,E_is,E_hs,mol2_ls,mol2_is,mol2_hs,dis_ls,dis_is,dis_hs = [],[],[],[],[],[],[],[],[]
+deloc_ls,deloc_is,deloc_hs = [],[],[]
 
 indexes = df.index.values
 for i in indexes:
@@ -327,15 +328,18 @@ for i in indexes:
     aps = ''
     if float(row['apnum']) != 1:
         aps = '_' + str(ap1) + '_' + str(ap2)
-    refname = refcode + aps + '_1'
+    refname = refcode + aps + '_round2f'
 
     #Record all
-    Els,mol2ls,disls = analyze_efei_supercloud(refname + '_LS')
+    Els,mol2ls,disls = analyze_efei_expanse(refname + '_LS')
+    delocls = find_spin_delocalization(refname + '_LS/' + refname + '_LS.out', metal)
     if metal == 'Co' and charge == 2:
-        Eis,mol2is,disis = 'N/A','N/A','N/A'
+        Eis,mol2is,disis,delocis = 'N/A','N/A','N/A',0
     else:
-        Eis,mol2is,disis = analyze_efei_supercloud(refname + '_IS')
-    Ehs,mol2hs,dishs = analyze_efei_supercloud(refname + '_HS')
+        Eis,mol2is,disis = analyze_efei_expanse(refname + '_IS')
+        delocis = find_spin_delocalization(refname + '_IS/' + refname + '_IS.out', metal)
+    Ehs,mol2hs,dishs = analyze_efei_expanse(refname + '_HS')
+    delochs = find_spin_delocalization(refname + '_HS/' + refname + '_HS.out', metal)
     
     #Resub analysis
     #if row['Els'] == 'Failed':
@@ -350,7 +354,6 @@ for i in indexes:
         #df.at[i,'round1_diss_ls'] = disls
 
     #Record all recording    
-    r1_fs.append(1)
     E_ls.append(Els)
     E_is.append(Eis)
     E_hs.append(Ehs)
@@ -360,14 +363,20 @@ for i in indexes:
     dis_ls.append(disls)
     dis_is.append(disis)
     dis_hs.append(dishs)
-    
-df['round1_force'] = r1_fs
-df['round1_Els'] = E_ls
-df['round1_Eis'] = E_is
-df['round1_Ehs'] = E_hs
-df['round1_mol2ls'] = mol2_ls
-df['round1_mol2is'] = mol2_is
-df['round1_mol2hs'] = mol2_hs
-df['round1_diss_ls'] = dis_ls
-df['round1_diss_is'] = dis_is
-df['round1_diss_hs'] = dis_hs
+    deloc_ls.append(delocls)
+    deloc_is.append(delocis)
+    deloc_hs.append(delochs)
+
+df['round2f_Els'] = E_ls
+df['round2f_Eis'] = E_is
+df['round2f_Ehs'] = E_hs
+df['round2f_mol2ls'] = mol2_ls
+df['round2f_mol2is'] = mol2_is
+df['round2f_mol2hs'] = mol2_hs
+df['round2f_diss_ls'] = dis_ls
+df['round2f_diss_is'] = dis_is
+df['round2f_diss_hs'] = dis_hs
+
+df['round2f_delocls'] = deloc_ls
+df['round2f_delocis'] = deloc_is
+df['round2f_delochs'] = deloc_hs
