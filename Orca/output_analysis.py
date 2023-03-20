@@ -178,7 +178,7 @@ def analyze_efei_expanse(basename, thres=10, record_failed_mol2 = True):
     natoms = open(basename + '/' + basename + '.xyz','r').readlines()[0].split()[0]
     natoms = int(natoms)
     frames = find_opt_frames(basename + '/' + basename + '.out',natoms)
-    if len(frames) < 2 and energy == 'Failed:
+    if len(frames) < 2 and energy == 'Failed':
         mol2 = 'no_progress'
     else:
         file = open('temp_rec.xyz', 'w')
@@ -189,11 +189,6 @@ def analyze_efei_expanse(basename, thres=10, record_failed_mol2 = True):
         mol_rec = mol3D()
         mol_rec.readfromxyz('temp_rec.xyz')
         mol2 = mol_rec.writemol2('temp_rec.mol',writestring = True)
-
-    #Check if the molecule has dissociated (don`t call an diss job 'failed')
-    has_dis = check_diss_by_out(basename,threshold=thres)
-    if has_dis == True and energy == 'Failed':
-        energy = 'Diss'
 
     #Return results
     if record_failed_mol2 == False:
