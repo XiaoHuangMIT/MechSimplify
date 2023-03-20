@@ -342,16 +342,13 @@ for i in indexes:
     delochs = find_spin_delocalization(refname + '_HS/' + refname + '_HS.out', metal)
     
     #Resub analysis
-    #if row['Els'] == 'Failed':
-        #Els = read_orca(refname + '_LS' + aps + '/' + refname + '_LS' + aps + '.out')
-        #mol2ls = record_xyz(refname + '_LS' + aps + '/scr/' + refname + '_LS' + aps + '.xyz')
-        #df.at[i,'Els'] = Els
-        #df.at[i,'mol2ls'] = mol2ls    
-    #if row['round1_Els'] == 'Failed':
-        #Els,mol2ls,disls = analyze_efei_expanse(refname + '_LS')
-        #df.at[i,'round1_Els'] = Els
-        #df.at[i,'round1_mol2ls'] = mol2ls
-        #df.at[i,'round1_diss_ls'] = disls
+    #if row['round1f_Ehs'] == 'Failed':
+        #Ehs1,mol2hs1,dishs1 = analyze_efei_expanse(refname1 + '_HS')
+        #delochs1 = find_spin_delocalization(refname1 + '_HS/' + refname1 + '_HS.out', metal)
+        #df.at[i,'round1f_Ehs'] = Ehs1
+        #df.at[i,'round1f_mol2hs'] = mol2hs1
+        #if Ehs1 != 'Failed':
+            #df.at[i,'round1f_delochs'] = delochs1
 
     #Record all recording    
     E_ls.append(Els)
