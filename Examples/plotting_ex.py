@@ -37,6 +37,39 @@ fig.tight_layout()
 plt.show()
 
 
+
+
+figure_formatting()
+
+metals = ['Fe2','Co2','Co3','Mn2']
+
+x = np.arange(len(metals))  # the label locations
+width = 0.2
+
+fig, ax = plt.subplots(figsize=(12,8))
+rects1 = ax.bar(x - 3/2*width, counts_ls, width, label='All LS',color='tab:blue')
+rects2 = ax.bar(x - width/2, counts_scf, width, label='SCF Err',color='tab:red')
+rects3 = ax.bar(x + width/2, counts_deloc, width, label='Deloc Err',color='tab:green')
+rects4 = ax.bar(x + 3/2*width ,counts_good, width, label='Good',color='tab:orange')
+
+
+ax.set_ylabel('Counts',font='Helvetica',fontsize=20)
+ax.set_yticks(np.arange(0,200,25), np.arange(0,200,25),font='Helvetica',fontsize=20)
+#.set_title('Mer candidates',font='Helvetica')
+ax.set_xticks(x, metals,font='Helvetica',fontsize=20)
+ax.legend(prop = {'size' : 20,'family': 'Helvetica'})
+
+ax.bar_label(rects1, label_type='center',padding=3,font='Helvetica',fontsize=20)
+ax.bar_label(rects2, label_type='center',padding=3,font='Helvetica',fontsize=20)
+ax.bar_label(rects3, label_type='center',padding=3,font='Helvetica',fontsize=20)
+ax.bar_label(rects4, label_type='center',padding=3,font='Helvetica',fontsize=20)
+
+fig.tight_layout()
+
+plt.show()
+
+
+
 ################################Analayze Spin Splitting#####################################
 def plot_Ehsls(Ecolumn, title, size=(8,6), width=0.3, color='tab:blue', return_counts=True):
     
