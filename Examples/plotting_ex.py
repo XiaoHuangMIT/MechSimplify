@@ -5,6 +5,26 @@ plt.rc('font',size=15)
 
 
 
+def figure_formatting(): # make the plot look xmgrace-esque
+    font = {'family': 'sans-serif', 'weight': 'bold', 'size': 20} #25 for main
+    plt.rcParams['font.sans-serif'] = ['Helvetica']
+    plt.rc('font', **font)
+    plt.rcParams['axes.linewidth'] = 2.0
+    plt.rcParams['xtick.major.size'] = 10
+    plt.rcParams['xtick.minor.size'] = 5
+    plt.rcParams['xtick.major.width'] = 2.0
+    plt.rcParams['xtick.minor.width'] = 2.0
+    plt.rcParams['ytick.major.size'] = 10
+    plt.rcParams['ytick.minor.size'] = 5
+    plt.rcParams['ytick.major.width'] = 2.0
+    plt.rcParams['ytick.minor.width'] = 2.0
+    plt.rcParams['xtick.direction'] = 'in'
+    plt.rcParams['ytick.direction'] = 'in'
+    plt.rcParams['mathtext.default'] = 'regular'
+    plt.rcParams['legend.fancybox'] = False # no rounded legend box
+    
+    
+    
 ####Bar####
 metals = ['Fe2','Fe3','Co2','Co3','Ni2','Mn2'] #NI3+ only 5/3
 totals = np.array([181,5,78,25,100,21])
