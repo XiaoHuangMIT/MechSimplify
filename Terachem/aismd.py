@@ -5,6 +5,106 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
+def prep_aismd_input(name, reps, steering_file, xyz_file, walltime='120:00:00',nstep=20000):
+
+    #Function to preparae aimsd input for terachem for organic molecules
+    #Method by default:
+    #B3LYP(VMN5)-D3BJ
+    #6-31gs
+    #Gaseous phase
+
+    #In current directory, make a folder: name_reps
+    #Inside the folder, write name_reps_jobscript, name_reps.in
+    #The folder should contain a steering file and a xyz file, to be then copied to every folder of repeated runs
+
+    #Inputs:
+    #name: name of the job
+    #reps: number of repeated trials to run
+    #steering_file, xyz_file: name of steering txt and xyz file to be copied
+    #walltime: max length of simulation time, default 120 hrs/5 days
+    #nstep: max number of aismd simulation time, default 20000 steps/5 ps
+
+   
+    for i in np.arange(reps):
+        
+        i += 1
+        #Generate name of job
+        if i < 10:
+            i = '0' + str(i)
+        else:
+            i = str(i)
+        basename = name + '_' + i
+        
+        #Make directory
+        dirname = basename + '/'
+        if not os.path.exists(dirname):
+            os.mkdir(dirname)
+            
+        #Copy xyz and steering file
+        shutil.copy(steering_file,dirname)
+        shutil.copy(xyz_file,dirname)
+        
+        #Write jobscript
+        rescale = int(nstep) + 1
+        with open(dirname + basename + '_jobscript','w') as f:
+            f.write('#S -S /bin/bash\n')
+            f.write('#$ -N ' + basename + '\n')
+            f.write('#$ -cwd\n')
+            f.write('#$ -R y\n')
+            f.write('#$ -l h_rt=' + walltime + '\n')
+            f.write('#$ -l h_rss=8G\n')
+            f.write('#$ -q (gpusnew|gpus)\n')
+            f.write('#$ -l gpus=1\n')
+            f.write('#$ -pe smp 1\n')
+            f.write('# -fin ' + basename + '.in\n')
+            f.write('# -fin ' + xyz_file + '\n')
+            f.write('# -fin ' + steering_file + '\n')
+            f.write('# -fout scr/\n')
+            f.write('\n')
+            f.write('module load cuda\n')
+            f.write('module load terachem\n')
+            f.write('\n')
+            f.write('export OMP_NUM_THREADS=1\n')
+            f.write('\n')
+            f.write('terachem ' + basename + '.in > $SGE_O_WORKDIR/' + basename + '.out')
+            f.close()
+        
+        with open(dirname + basename + '.in','w') as f:
+            f.write('run md\n')
+            f.write('coordinates ' + xyz_file + '\n')
+            f.write('maxit 1001\n')
+            f.write('nstep ' + str(nstep) + '\n')
+            f.write('rescalefreq ' + str(rescale) + '\n')
+            f.write('tinit 300\n')
+            f.write('seed 23486\n')
+            f.write('integrator reversible_d\n')
+            f.write('timestep 0.25\n')
+            f.write('\n')
+            f.write('steering ' + steering_file + '\n')
+            f.write('\n')
+            f.write('basis 6-31G*\n')
+            f.write('method ub3lyp\n')
+            f.write('dispersion yes\n')
+            f.write('\n')
+            f.write('charge 0\n')
+            f.write('spinmult 1\n')
+            f.write('\n')
+            f.write('scf diis+a \n')
+            f.write('levelshift yes\n')
+            f.write('levelshiftvala 1.0\n')
+            f.write('levelshiftvalb 0.0\n')
+            f.write('maxit 500\n')
+            f.write('precision dynamic\n')
+            f.write('new_minimizer yes\n')
+            f.write('\n')
+            f.write('scrdir ./scr\n')
+            f.write('Timings yes\n')
+            f.write('gpus 1\n')
+            f.write('end\n')
+            f.close()
+
+
+
 def find_coord(line,special_case = False):
     #return xyz coordinate of an atom in xyz file
     line_list = line.split()
