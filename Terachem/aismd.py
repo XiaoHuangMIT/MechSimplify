@@ -6,7 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def prep_aismd_input(name, reps, steering_file, xyz_file, walltime='120:00:00',nstep=20000):
+def prep_aismd_input(name, reps, steering_file, xyz_file, reps_list='no', walltime='120:00:00',nstep=20000):
 
     #Function to preparae aimsd input for terachem for organic molecules
     #Method by default:
@@ -21,20 +21,21 @@ def prep_aismd_input(name, reps, steering_file, xyz_file, walltime='120:00:00',n
     #Inputs:
     #name: name of the job
     #reps: number of repeated trials to run
+    #reps can be specified as a list if reps_list is True
     #steering_file, xyz_file: name of steering txt and xyz file to be copied
     #walltime: max length of simulation time, default 120 hrs/5 days
     #nstep: max number of aismd simulation time, default 20000 steps/5 ps
 
-   
-    for i in np.arange(reps):
-        
-        i += 1
-        #Generate name of job
-        if i < 10:
-            i = '0' + str(i)
-        else:
-            i = str(i)
-        basename = name + '_' + i
+    if reps_list == False:
+        for i in np.arange(reps):
+            i += 1
+            #Generate name of job
+            if i < 10:
+                i = '0' + str(i)
+            else:
+                i = str(i)
+            basename = name + '_' + i
+    elif reps_list == True
         
         #Make directory
         dirname = basename + '/'
