@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from numpy.random import randint
 import pandas as pd
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -76,7 +77,8 @@ def prep_aismd_input(name, reps, steering_file, xyz_file, walltime='120:00:00',n
             f.write('nstep ' + str(nstep) + '\n')
             f.write('rescalefreq ' + str(rescale) + '\n')
             f.write('tinit 300\n')
-            f.write('seed 23486\n')
+            seed = randint(1000,high=100000)
+            f.write('seed' + str(seed) + '\n')
             f.write('integrator reversible_d\n')
             f.write('timestep 0.25\n')
             f.write('\n')
