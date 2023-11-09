@@ -26,16 +26,19 @@ def prep_aismd_input(name, reps, steering_file, xyz_file, reps_list=False, wallt
     #walltime: max length of simulation time, default 120 hrs/5 days
     #nstep: max number of aismd simulation time, default 20000 steps/5 ps
 
-    if reps_list == False:
-        for i in np.arange(reps):
-            i += 1
-            #Generate name of job
-            if i < 10:
-                i = '0' + str(i)
-            else:
-                i = str(i)
-            basename = name + '_' + i
-    elif reps_list == True
+    if rep_list == False:
+        ljobs = np.arange(reps)
+    elif rep_list == True:
+        ljobs = reps
+    
+    for i in ljobs:
+        i += 1
+        #Generate name of job
+        if i < 10:
+            i = '0' + str(i)
+        else:
+            i = str(i)
+        basename = name + '_' + i  
         
         #Make directory
         dirname = basename + '/'
