@@ -82,7 +82,7 @@ def prep_aismd_input(name, reps, steering_file, xyz_file, rep_list=False, wallti
             f.write('rescalefreq ' + str(rescale) + '\n')
             f.write('tinit 300\n')
             seed = randint(1000,high=100000)
-            f.write('seed' + str(seed) + '\n')
+            f.write('seed ' + str(seed) + '\n')
             f.write('integrator reversible_d\n')
             f.write('timestep 0.25\n')
             f.write('\n')
