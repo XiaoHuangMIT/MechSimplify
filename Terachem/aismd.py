@@ -6,7 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def prep_aismd_input(name, reps, steering_file, xyz_file, reps_list=False, walltime='120:00:00',nstep=20000):
+def prep_aismd_input(name, reps, steering_file, xyz_file, rep_list=False, walltime='120:00:00',nstep=20000):
 
     #Function to preparae aimsd input for terachem for organic molecules
     #Method by default:
