@@ -175,7 +175,65 @@ def find_cbond_angle(molecule,ccaid=None):
      cmcangle3 = vecangle(v2,v3)
       
      return [cmcangle1,cmcangle2,cmcangle3],[(idx1,idx2),(idx1,idx3),(idx2,idx3)]
-  
-  
-  
 
+
+
+def find_path_between_coordatoms(molecule,symmetry,returnelements=False):
+    
+    #Returns the index of coord atom 123, and path length between coordination atoms 1-2, 1-3 and 2-3
+    #For mer symmetry complex: 1 is set as central atom
+    #For fac symmetry complex: randomly assigned
+    #Inputs:
+    #molecule: mol3D object
+    #symmetry:mer or fac
+    #Returns:
+    #catom1, catom2, catom3, pathlength12,pathlength13,pathlength23
+    
+    catoms = ligand_breakdown(molecule)[2][0]
+    if symmetry == 'mer':
+        cca1,cca2 = find_central_atom(molecule)
+        if cca1 in catoms:
+            catom1 = cca1
+        elif cca2 in catoms:
+            catom1 = cca2
+        else:
+            print('Errr 1')
+        catoms.remove(catom1)
+        catom2 = catoms[0]
+        catom3 = catoms[1]
+    elif symmetry == 'fac':
+        catom1 = catoms[0]
+        catom2 = catoms[1]
+        catom3 = catoms[2]
+    
+    metal_id = molecule.findMetal()[0]
+    molecule.deleteatom(metal_id)
+    if metal_id < catom1:
+        catom1_nm = catom1 - 1
+    elif metal_id > catom1:
+        catom1_nm = catom1
+    if metal_id < catom2:
+        catom2_nm = catom2 - 1
+    elif metal_id > catom2:
+        catom2_nm = catom2
+    if metal_id < catom3:
+        catom3_nm = catom3 - 1
+    elif metal_id > catom3:
+        catom3_nm = catom3
+    
+    molecule.createMolecularGraph()
+    g = molecule.graph
+    gx = nx.from_numpy_matrix(g)
+    paths12 = nx.all_shortest_paths(gx,source=catom1_nm,target=catom2_nm)
+    paths13 = nx.all_shortest_paths(gx,source=catom1_nm,target=catom3_nm)
+    paths23 = nx.all_shortest_paths(gx,source=catom2_nm,target=catom3_nm)
+    
+    len12,len13,len23 = 0,0,0
+    for path in paths12:
+        len12 = len(path)
+    for path in paths13:
+        len13 = len(path)
+    for path in paths23:
+        len23 = len(path)
+    
+    return catom1,catom2,catom3,len12,len13,len23
