@@ -55,7 +55,41 @@ def read_orca(filepath):
         return 'Failed'
 
     
-    
+
+def read_orca_Gibbs(filepath):
+
+    #Check if optimization has converged normally (not inconvergence or out of time)
+    #If so,return the final energy: energy + external potential
+
+    if os.path.exists(filepath) == False:
+        return 'Unperformed'
+
+    lines = open(filepath,'r').readlines()
+    cond_1 = False #'Optimization run done' is found in file
+    cond_2 = False #'Orca terminated normally' is found (as second-last line)
+    cond_3 = True # 'The optimization did not converge' is found in file
+
+    for line in lines:
+
+        if 'OPTIMIZATION RUN DONE' in line:
+            cond_1 = True
+
+        elif 'ORCA TERMINATED NORMALLY' in line:
+            cond_2 = True
+
+        elif 'The optimization did not converge' in line:
+            cond_3 = False
+
+        elif 'Final Gibbs free energy' in line:
+            Eg = float(line.split()[-1])
+
+    if cond_1 and cond_2 and cond_3:
+        return Eg
+    else:
+        return 'Failed'
+
+
+
 def record_xyz(filepath):
     
     if os.path.exists(filepath) == False:
