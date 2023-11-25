@@ -81,7 +81,7 @@ def read_orca_Gibbs(filepath):
             cond_3 = False
 
         elif 'Final Gibbs free energy' in line:
-            Eg = float(line.split()[-1])
+            Eg = float(line.split()[-2])
 
     if cond_1 and cond_2 and cond_3:
         return Eg
