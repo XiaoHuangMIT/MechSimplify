@@ -30,18 +30,17 @@ def prep_aismd_input(name, reps, steering_file, xyz_file, rep_list=False, wallti
         ljobs = np.arange(reps)
     elif rep_list == True:
         ljobs = reps
-    ljobs = np.array(ljobs).as_type('int')
+    ljobs = np.array(ljobs).astype('int')
     ljobs = ljobs -1
     
     for i in ljobs:
-
+        i += 1
         #Generate name of job
         if i < 10:
             i = '0' + str(i)
         else:
             i = str(i)
         basename = name + '_' + i  
-        i += 1
         
         #Make directory
         dirname = basename + '/'
@@ -111,6 +110,7 @@ def prep_aismd_input(name, reps, steering_file, xyz_file, rep_list=False, wallti
             f.write('gpus 1\n')
             f.write('end\n')
             f.close()
+
 
 
 def find_coord(line,special_case = False):
