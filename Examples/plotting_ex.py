@@ -6,9 +6,9 @@ plt.rc('font',size=15)
 
 
 def figure_formatting(): # make the plot look xmgrace-esque
-    font = {'family': 'sans-serif', 'weight': 'bold', 'size': 20} #25 for main
+    #font = {'family': 'sans-serif', 'weight': 'bold', 'size': 15}
     plt.rcParams['font.sans-serif'] = ['Helvetica']
-    plt.rc('font', **font)
+    #plt.rc('font', **font)
     plt.rcParams['axes.linewidth'] = 2.0
     plt.rcParams['xtick.major.size'] = 10
     plt.rcParams['xtick.minor.size'] = 5
@@ -22,6 +22,8 @@ def figure_formatting(): # make the plot look xmgrace-esque
     plt.rcParams['ytick.direction'] = 'in'
     plt.rcParams['mathtext.default'] = 'regular'
     plt.rcParams['legend.fancybox'] = False # no rounded legend box
+    plt.rcParams['svg.fonttype']='none'
+figure_formatting()
     
     
     
