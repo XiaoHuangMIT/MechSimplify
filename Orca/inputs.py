@@ -89,7 +89,8 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, machine, metal = None,
             f.write('export OMP_NUM_THREADS=8\n')
             f.write('\n')
             f.write('$ORCAHOME/bin/orca ' + basename + '.in > $SLURM_SUBMIT_DIR/' + basename + '.out\n')
-            f.write('mv * $SLURM_SUBMIT_DIR/scr\n')
+            f.write('mv *.gbw $SLURM_SUBMIT_DIR/scr\n')
+            f.write('mv *.xyz $SLURM_SUBMIT_DIR/scr\n')
             f.write('\n')
         elif machine == 'supercloud':
             f.write('#!/bin/bash\n')
