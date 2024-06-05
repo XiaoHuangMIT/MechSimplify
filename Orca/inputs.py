@@ -96,7 +96,7 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, machine='expanse', hfx
             f.write('#!/bin/bash\n')
             f.write('#SBATCH --job-name=' + basename + '\n')
             f.write('#SBATCH --output=' + basename + '.out' + '\n')
-            f.write('#SBATCH --mem-per-cpu=4gb\n')
+            f.write('#SBATCH --mem-per-cpu=2gb\n')
             f.write('#SBATCH --time=48:00:00\n')
             f.write('#SBATCH --ntasks=8\n')
             f.write('#SBATCH --export=ALL\n')
