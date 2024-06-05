@@ -13,7 +13,7 @@ from molSimplify.job_manager.manager_io import read_outfile
 #########################################################################################################################################################
 
 
-def prep_orca_input(refcode, charge, spin, spinval, mol2, machine, metal = None, multiPP = None, round = None, dist_constraint = None, EFEI = None):
+def prep_orca_input(refcode, charge, spin, spinval, mol2, machine, hfx = 0.15, metal = None, multiPP = None, round = None, dist_constraint = None, EFEI = None):
 
 
     #Write orca EFEI geometry optimization input, including distance-constraint and force_modified variations, that
@@ -123,11 +123,13 @@ def prep_orca_input(refcode, charge, spin, spinval, mol2, machine, metal = None,
         f.close()
 
     #Generating inputs
+    a = str(hfx)
+    b = str(0.8*(1-hfx))
     with open(basename + '/' + basename + '.in', 'w') as f:
         f.write('! uks B3LYP D3BJ Opt def2-SVP\n')
         f.write('%method\n')
-        f.write('ScalHFX = 0.15\n') 
-        f.write('ScalDFX = 0.77\n')
+        f.write('ScalHFX = ' + a + '\n') 
+        f.write('ScalDFX = ' + b + '\n') 
         f.write('ScalDFC = 0.81\n')
         f.write('ScalLDAC = 1\n')
         f.write('end\n')
