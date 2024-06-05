@@ -13,7 +13,7 @@ from molSimplify.job_manager.manager_io import read_outfile
 #########################################################################################################################################################
 
 
-def prep_orca_input(refcode, charge, spin, spinval, mol2, machine, hfx = 0.15, metal = None, multiPP = None, round = None, dist_constraint = None, EFEI = None):
+def prep_orca_input(refcode, charge, spin, spinval, mol2, machine='expanse', hfx = 0.15, metal = None, multiPP = None, round = None, dist_constraint = None, EFEI = None):
 
 
     #Write orca EFEI geometry optimization input, including distance-constraint and force_modified variations, that
