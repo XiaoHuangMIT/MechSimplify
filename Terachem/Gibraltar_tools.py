@@ -169,12 +169,13 @@ def get_atoms_distance(mol2,idx1,idx2):
 
 
 
-def get_tera_opt_out(filepath):
+def get_tera_opt_out(basename):
     
     #Getting optimized energy and geometry structure from a terachem geom opt job
-    #filepath: folder named X, containing X_jobscript, X.in, X.xyz, X.out and scr folder
+    #basename: folder named X, containing X_jobscript, X.in, X.xyz, X.out and scr folder
     #dependency: find_opt_xyz; read_outfile
-    
+
+    filepath = basename + '/' + basename + '.out'
     if os.path.exists(filepath + '/scr') == False: #if not finished
         Eout = None
         mol2out = 'Failed Convergence'
