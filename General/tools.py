@@ -4,6 +4,34 @@ import matplotlib.pyplot as plt
 from molSimplify.Classes.mol3D import mol3D
 
 
+
+def atom_func(mol,idxs,eles):
+
+    #Generate a new mol2 by changing the atoms of given idxs into specified elements
+    #idxs: list of idxs to be modified, start with 0
+    #eles: list of elements to be changed into
+
+    mol.writexyz('temp.xyz',symbsonly=True)
+    f = open('temp.xyz','r')
+    lines = f.readlines()
+
+    for i in np.arange(len(idxs)):
+        idx,ele = idxs[i],eles[i]
+        line = lines[idx+2] #First two lines are placeholders
+        linel = line.split()
+        linenew = ele + ' ' + linel[1] + ' ' + linel[2] + ' ' + linel[3] + '\n'
+        lines[idx+2] = linenew
+
+    with open('tempnew.xyz','w') as fnew:
+        fnew.writelines(lines)
+
+    molnew = mol3D()
+    molnew.readfromxyz('tempnew.xyz')
+
+    return molnew
+
+
+
 def separate_metal_and_charge(df, count_only = False):
     
     dffe = df[df.metal == 'Fe']
