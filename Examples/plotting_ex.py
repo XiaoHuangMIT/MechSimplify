@@ -25,8 +25,8 @@ def figure_formatting(): # make the plot look xmgrace-esque
     plt.rcParams['svg.fonttype']='none'
 figure_formatting()
     
-    
-    
+
+
 ####Bar####
 metals = ['Fe2','Fe3','Co2','Co3','Ni2','Mn2'] #NI3+ only 5/3
 totals = np.array([181,5,78,25,100,21])
@@ -60,56 +60,26 @@ plt.show()
 
 
 
-
+####Histogram####
 figure_formatting()
+plt.plot(figsize=(8,6))
+plt.hist([df1['E_gap'],df2['E_gap'],df3['E_gap']],
+           bins=np.arange(0,121,5),
+             stacked=True,edgecolor='black',
+           color=[(0,0,1,1),(0,0.5,0,1),(1,0.65,0,1)],linewidth=2,label=['0-0.5','0.5-1','1-1.5'])
 
-metals = ['Fe2','Co2','Co3','Mn2']
+plt.vlines(70,0,41,linestyles='dashed',linewidth=2,color='darkgreen')
+plt.vlines(80,0,41,linestyles='dashed',linewidth=2,color='darkorange')
 
-x = np.arange(len(metals))  # the label locations
-width = 0.2
+plt.xticks(np.arange(0,121,20),np.arange(0,121,20))
+plt.xlabel('Partial Dissociation Energy (kcal/mol)')
 
-fig, ax = plt.subplots(figsize=(12,8))
-rects1 = ax.bar(x - 3/2*width, counts_ls, width, label='All LS',color='tab:blue')
-rects2 = ax.bar(x - width/2, counts_scf, width, label='SCF Err',color='tab:red')
-rects3 = ax.bar(x + width/2, counts_deloc, width, label='Deloc Err',color='tab:green')
-rects4 = ax.bar(x + 3/2*width ,counts_good, width, label='Good',color='tab:orange')
+plt.yticks(np.arange(0,41,5))
+plt.ylabel('counts')
+plt.ylim(0,40)
 
-
-ax.set_ylabel('Counts',font='Helvetica',fontsize=20)
-ax.set_yticks(np.arange(0,200,25), np.arange(0,200,25),font='Helvetica',fontsize=20)
-#.set_title('Mer candidates',font='Helvetica')
-ax.set_xticks(x, metals,font='Helvetica',fontsize=20)
-ax.legend(prop = {'size' : 20,'family': 'Helvetica'})
-
-ax.bar_label(rects1, label_type='center',padding=3,font='Helvetica',fontsize=20)
-ax.bar_label(rects2, label_type='center',padding=3,font='Helvetica',fontsize=20)
-ax.bar_label(rects3, label_type='center',padding=3,font='Helvetica',fontsize=20)
-ax.bar_label(rects4, label_type='center',padding=3,font='Helvetica',fontsize=20)
-
-fig.tight_layout()
-
-plt.show()
-
-
-
-################################Analayze Spin Splitting#####################################
-def plot_Ehsls(Ecolumn, title, size=(8,6), width=0.3, color='tab:blue', return_counts=True):
-    
-    counts = np.histogram(Ecolumn,bins = [0,5,10,20,30,1000])
-    counts = counts[0]
-    
-    Es = ['0-5','5-10','10-20','20-30','30+']
-    x = np.arange(len(Es))
-    wid = width
-    
-    fig, ax = plt.subplots(figsize=size)
-    rects1 = ax.bar(x, counts, wid,color=color)
-    ax.bar_label(rects1, label_type='center',padding=3)
-    
-    ax.set_ylabel('Counts')
-    ax.set_title(title)
-    ax.set_xticks(x, Es)
-    ax.set_xlabel('HS-LS Spin Splitting Energy (kcal/mol)')
-    
+plt.title('Ortho-Type Candidates',size=16)
+leg = plt.legend(prop = {'size' : 13,'family': 'Helvetica'},edgecolor='black')
+leg.get_frame().set_linewidth(2)
     plt.show()
 
